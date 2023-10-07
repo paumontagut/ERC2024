@@ -1,5 +1,15 @@
 # UJI ROBOTICS - ERC2024
 
+
+### Conventional Commits
+Sigue la estructura:
+```
+<tipo>(ámbito opcional): <descripción>
+```
+
+[más información](https://dev.to/achamorro_dev/conventional-commits-que-es-y-por-que-deberias-empezar-a-utilizarlo-23an)
+
+
 ### Normas de código
 #### Basadas en [la guía de estilo de C++ de Google](https://google.github.io/styleguide/cppguide.html) y [la guía de estilo y estándares de C++ de la NASA](https://ntrs.nasa.gov/citations/20080039927)
 
@@ -84,11 +94,3 @@ Usa todos los avisos posibles:
 ```
 g++ -Wall -Werror -Wextra -pedantic
 ```
-
-### Conventional Commits
-Sigue la estructura:
-```
-<tipo>(ámbito opcional): <descripción>
-```
-
-[más información](https://dev.to/achamorro_dev/conventional-commits-que-es-y-por-que-deberias-empezar-a-utilizarlo-23an)

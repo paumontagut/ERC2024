@@ -1,0 +1,10 @@
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/install/strip.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/install/local.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/install.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/list_install_components.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/rebuild_cache.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/edit_cache.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/test.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/ejemplo.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/movement_uninstall.dir
+/home/edgar/ERC2024/test_ws/build/movement/CMakeFiles/uninstall.dir

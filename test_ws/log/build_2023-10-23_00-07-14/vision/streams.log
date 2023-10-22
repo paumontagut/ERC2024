@@ -1,0 +1,38 @@
+[0.280s] Invoking command in '/home/edgar/ERC2024/test_ws/src/vision': PYTHONPATH=/home/edgar/ERC2024/test_ws/build/vision/prefix_override:/home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/vision build --build-base /home/edgar/ERC2024/test_ws/build/vision/build install --record /home/edgar/ERC2024/test_ws/build/vision/install.log --install-scripts $base/lib/vision --single-version-externally-managed
+[0.369s] running egg_info
+[0.369s] creating ../../build/vision/vision.egg-info
+[0.369s] writing ../../build/vision/vision.egg-info/PKG-INFO
+[0.369s] writing dependency_links to ../../build/vision/vision.egg-info/dependency_links.txt
+[0.369s] writing entry points to ../../build/vision/vision.egg-info/entry_points.txt
+[0.369s] writing requirements to ../../build/vision/vision.egg-info/requires.txt
+[0.369s] writing top-level names to ../../build/vision/vision.egg-info/top_level.txt
+[0.370s] writing manifest file '../../build/vision/vision.egg-info/SOURCES.txt'
+[0.386s] reading manifest file '../../build/vision/vision.egg-info/SOURCES.txt'
+[0.386s] writing manifest file '../../build/vision/vision.egg-info/SOURCES.txt'
+[0.387s] running build
+[0.387s] running build_py
+[0.387s] creating /home/edgar/ERC2024/test_ws/build/vision/build
+[0.387s] creating /home/edgar/ERC2024/test_ws/build/vision/build/lib
+[0.387s] creating /home/edgar/ERC2024/test_ws/build/vision/build/lib/vision
+[0.387s] copying vision/aruco_detector.py -> /home/edgar/ERC2024/test_ws/build/vision/build/lib/vision
+[0.387s] copying vision/__init__.py -> /home/edgar/ERC2024/test_ws/build/vision/build/lib/vision
+[0.387s] running install
+[0.387s] running install_lib
+[0.387s] creating /home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages/vision
+[0.388s] copying /home/edgar/ERC2024/test_ws/build/vision/build/lib/vision/aruco_detector.py -> /home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages/vision
+[0.388s] copying /home/edgar/ERC2024/test_ws/build/vision/build/lib/vision/__init__.py -> /home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages/vision
+[0.388s] byte-compiling /home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages/vision/aruco_detector.py to aruco_detector.cpython-38.pyc
+[0.388s] byte-compiling /home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages/vision/__init__.py to __init__.cpython-38.pyc
+[0.388s] running install_data
+[0.389s] creating /home/edgar/ERC2024/test_ws/install/vision/share/ament_index
+[0.389s] creating /home/edgar/ERC2024/test_ws/install/vision/share/ament_index/resource_index
+[0.389s] creating /home/edgar/ERC2024/test_ws/install/vision/share/ament_index/resource_index/packages
+[0.389s] copying resource/vision -> /home/edgar/ERC2024/test_ws/install/vision/share/ament_index/resource_index/packages
+[0.389s] copying package.xml -> /home/edgar/ERC2024/test_ws/install/vision/share/vision
+[0.389s] copying launch/simple.launch.py -> /home/edgar/ERC2024/test_ws/install/vision/share/vision
+[0.389s] running install_egg_info
+[0.390s] Copying ../../build/vision/vision.egg-info to /home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages/vision-0.0.0-py3.8.egg-info
+[0.390s] running install_scripts
+[0.399s] Installing aruco_detector script to /home/edgar/ERC2024/test_ws/install/vision/lib/vision
+[0.399s] writing list of installed files to '/home/edgar/ERC2024/test_ws/build/vision/install.log'
+[0.410s] Invoked command in '/home/edgar/ERC2024/test_ws/src/vision' returned '0': PYTHONPATH=/home/edgar/ERC2024/test_ws/build/vision/prefix_override:/home/edgar/ERC2024/test_ws/install/vision/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../../build/vision build --build-base /home/edgar/ERC2024/test_ws/build/vision/build install --record /home/edgar/ERC2024/test_ws/build/vision/install.log --install-scripts $base/lib/vision --single-version-externally-managed

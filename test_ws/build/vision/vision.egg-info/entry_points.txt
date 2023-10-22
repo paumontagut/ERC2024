@@ -1,0 +1,3 @@
+[console_scripts]
+aruco_detector = vision.aruco_detector:main
+

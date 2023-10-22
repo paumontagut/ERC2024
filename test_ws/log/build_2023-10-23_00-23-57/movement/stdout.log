@@ -1,0 +1,29 @@
+[35m[1mScanning dependencies of target ejemplo[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/ejemplo.dir/src/ejemplo.cpp.o[0m
+[100%] [32m[1mLinking CXX executable ejemplo[0m
+[100%] Built target ejemplo
+-- Install configuration: ""
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/lib/movement/ejemplo
+-- Set runtime path of "/home/edgar/ERC2024/test_ws/install/movement/lib/movement/ejemplo" to ""
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/environment/pythonpath.sh
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/environment/pythonpath.dsv
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/lib/python3.8/site-packages/movement
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/lib/python3.8/site-packages/movement/__init__.py
+Listing '/home/edgar/ERC2024/test_ws/install/movement/lib/python3.8/site-packages/movement'...
+Compiling '/home/edgar/ERC2024/test_ws/install/movement/lib/python3.8/site-packages/movement/__init__.py'...
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/lib/movement/ejemplo.py
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/ament_index/resource_index/package_run_dependencies/movement
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/ament_index/resource_index/parent_prefix_path/movement
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/environment/ament_prefix_path.sh
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/environment/ament_prefix_path.dsv
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/environment/path.sh
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/environment/path.dsv
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/local_setup.bash
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/local_setup.sh
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/local_setup.zsh
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/local_setup.dsv
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/package.dsv
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/ament_index/resource_index/packages/movement
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/cmake/movementConfig.cmake
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/cmake/movementConfig-version.cmake
+-- Installing: /home/edgar/ERC2024/test_ws/install/movement/share/movement/package.xml

@@ -3,14 +3,15 @@
 <package format="3">
   <name>vision</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>vision package</description>
   <maintainer email="al415553@uji.es">miguelub</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache License 2.0</license>
 
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>fiducial_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>sensor_msgs</depend>
 
   <exec_depend>ros2launch</exec_depend>
 

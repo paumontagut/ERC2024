@@ -34,7 +34,7 @@ class ArucoGenerate(Node):
     def __init__(self):
         super().__init__('aruco_generate')
 
-        self.publisher_generate = self.create_publisher(String, 'aruco_generator', 10) # Publisher for String message
+        self.publisher_generate = self.create_publisher(String, 'aruco_generator_callback', 10) # Publisher for String message
         self.timer = self.create_timer(1, self.generate_callback)
 
     def generate_callback(self):

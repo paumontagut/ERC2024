@@ -1,9 +1,9 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
+
 import numpy as np
 import cv2 
-import os
 
 ARUCO_DICT = {
     "DICT_4X4_50": cv2.aruco.DICT_4X4_50,
@@ -47,9 +47,7 @@ class ArucoGenerate(Node):
         print(f"ArUco type {aruco_type} with ID {id}")
         marker_image = cv2.aruco.generateImageMarker(arucoDict, id, 500) 
 
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-
-        tag_name = current_dir + "test_images/" + aruco_type + "_" + str(id) + ".png"  # !!! Change the path to your image !!!
+        tag_name = "/home/miguelub/Documents/GitHub/ERC2024/" + "test_ws/src/vision/vision/" + "test_images/" + aruco_type + "_" + str(id) + ".png"  # !!! Change the path to your image !!!
         cv2.imwrite(tag_name, marker_image)
         cv2.imshow("ArUco Tag", marker_image)
 

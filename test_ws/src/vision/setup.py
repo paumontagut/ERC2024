@@ -25,6 +25,7 @@ setup(
         'console_scripts': [
             'aruco_detector = vision.aruco_detector:main',
             'aruco_generate = vision.aruco_generate:main',
+            'aruco_orientation = vision.aruco_orientation:main',
         ],
     },
 )

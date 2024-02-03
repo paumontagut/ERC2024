@@ -18,12 +18,20 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(dynamixel_sdk REQUIRED)
+find_package(custom_interfaces REQUIRED)
 
-add_executable(bringup src/bringup.cpp)
-ament_target_dependencies(bringup rclcpp)
+include_directories(include)
+
+add_executable(motor_controller src/motor_controller.cpp)
+ament_target_dependencies(motor_controller 
+  rclcpp
+  dynamixel_sdk
+  custom_interfaces
+)
 
 install(TARGETS
-  bringup
+  motor_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 

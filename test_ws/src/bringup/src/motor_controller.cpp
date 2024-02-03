@@ -76,7 +76,7 @@ MotorController::MotorController()
    auto get_current_velocity =
       [this](
       const std::shared_ptr<GetVelocity::Request> request,
-      std::shared_ptr<GetPosition::Response> response) -> void {
+      std::shared_ptr<GetVelocity::Response> response) -> void {
          
          // Read current velocity (4 bytes)
          dxl_comm_result = packetHandler->read4ByteTxRx(
@@ -113,9 +113,9 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode.")
+      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode.");
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set Position Control mode.")
+      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set Position Control mode.");
    }
 
    // Enable Torque so the motor can move (EEPROM will be locked)
@@ -128,9 +128,9 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque.")
+      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque.");
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to enable Torque.")
+      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to enable Torque.");
    }
 }
 
@@ -160,8 +160,8 @@ int main(int argc, char * argv[]) {
    
    rclcpp::init(argc, argv);
    
-   auto readwritenode = std::make_shared<ReadWriteNode>();
-   rclcpp::spin(readwritenode);
+   auto motorcontroller = std::make_shared<MotorController>();
+   rclcpp::spin(motorcontroller);
    rclcpp::shutdown();
    
    // Disable Torque of DYNAMIXEL

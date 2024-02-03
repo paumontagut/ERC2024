@@ -115,7 +115,7 @@ void setupDynamixel(uint8_t dxl_id) {
    if (dxl_comm_result != COMM_SUCCESS) {
       RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode.");
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set Position Control mode.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set Velocity Control mode.");
    }
 
    // Enable Torque so the motor can move (EEPROM will be locked)
@@ -130,7 +130,7 @@ void setupDynamixel(uint8_t dxl_id) {
    if (dxl_comm_result != COMM_SUCCESS) {
       RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque.");
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to enable Torque.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to enable Torque.");
    }
 }
 
@@ -141,19 +141,19 @@ int main(int argc, char * argv[]) {
    // Open Serial Port
    dxl_comm_result = portHandler->openPort();
    if (dxl_comm_result == false) {
-      RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to open the port!");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to open the port!");
       return -1;
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to open the port.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to open the port.");
    }
    
    // Set the baudrate of the serial port (use DYNAMIXEL Baudrate)
    dxl_comm_result = portHandler->setBaudRate(BAUDRATE);
    if (dxl_comm_result == false) {
-      RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to set the baudrate!");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set the baudrate!");
       return -1;
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set the baudrate.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set the baudrate.");
    }
    
    setupDynamixel(BROADCAST_ID);

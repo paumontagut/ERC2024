@@ -1,3 +1,12 @@
+// sudo usermod -aG dialout <linux_account>
+//
+// Terminal 1
+// >> ros2 run bringup motor_controller
+//
+// Terminal 2
+// >> ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 500}"
+//
+
 #include <cstdio> // Dynamixel SDK
 #include <memory> // Dynamixel SDK
 #include <string> // Dynamixel SDK
@@ -20,7 +29,7 @@
 #define PROTOCOL_VERSION 2.0
 
 // Default setting
-#define BAUDRATE 57600 // 57600 Default baudrate
+#define BAUDRATE 115200 // 57600 Default baudrate
 #define DEVICE_NAME "/dev/ttyUSB0" // ls /dev/ttyUSB* to find the correct device name
 
 dynamixel::PortHandler *portHandler;

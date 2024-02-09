@@ -1,8 +1,8 @@
 #include <chrono>
 #include <cstdio>
-#include <unistd.h>
-#include <termios.h>
-#include <stdlib.h>
+#include <stdio.h>
+ #include <unistd.h>
+ #include <termios.h>
 
 #include "rclcpp/rclcpp.hpp"
 #include "custom_interfaces/msg/set_velocity.hpp"
@@ -15,8 +15,35 @@ using namespace std::chrono_literals;
 #define MAX_VELOCITY 500
 
 char c;
-struct termios orig_termios;
+rclcpp::WallRate loop_rate(100);
 
+
+int getch(void) {
+   int ch;
+   struct termios oldt;
+   struct termios newt;
+ 
+   // Store old settings, and copy to new settings
+   tcgetattr(STDIN_FILENO, &oldt);
+   newt = oldt;
+ 
+   // Make required changes and apply the settings
+   newt.c_lflag &= ~(ICANON | ECHO);
+   newt.c_iflag |= IGNBRK;
+   newt.c_iflag &= ~(INLCR | ICRNL | IXON | IXOFF);
+   newt.c_lflag &= ~(ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN);
+   newt.c_cc[VMIN] = 1;
+   newt.c_cc[VTIME] = 0;
+   tcsetattr(fileno(stdin), TCSANOW, &newt);
+ 
+   // Get the current character
+   ch = getchar();
+ 
+   // Reapply old settings
+   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+ 
+   return ch;
+ }
 
 class KeyboardTeleop : public rclcpp::Node {
 public:
@@ -24,12 +51,12 @@ public:
   : Node("keyboard_teleop") {
       vel_publisher_ = this->create_publisher<custom_interfaces::msg::SetVelocity>("set_velocity", 10);
       timer_ = this->create_wall_timer(
-        100ms, std::bind(&KeyboardTeleop::timer_callback, this));
+        500ms, std::bind(&KeyboardTeleop::timer_callback, this));
   }
 
 private:
    void timer_callback() {
-      rclcpp::WallRate loop_rate(100);
+      c = getch();
       if (c == 'w' && (velocity_+50) <= MAX_VELOCITY) {
          velocity_ += 50;
          changes_ = true;
@@ -57,25 +84,9 @@ private:
    bool changes_ = false;
 };
 
-void disableRawMode() {
-   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
-}
-
-void enableRawMode() {
-   tcgetattr(STDIN_FILENO, &orig_termios);
-   atexit(disableRawMode);
-
-   struct termios raw = orig_termios;
-   raw.c_lflag &= ~(ECHO | ICANON);
-
-   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-}
-
 int main(int argc, char *argv[]) {
-   enableRawMode();
    rclcpp::init(argc, argv);
    rclcpp::spin(std::make_shared<KeyboardTeleop>());
-   while (read(STDIN_FILENO, &c, 1) == 1);
    rclcpp::shutdown();
    return 0;
 }

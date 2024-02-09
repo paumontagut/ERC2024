@@ -15,7 +15,7 @@ using namespace std::chrono_literals;
 class KeyboardTeleop : public rclcpp::Node {
 public:
   KeyboardTeleop()
-  : Node("keyboard_teleop"), count_(0) {
+  : Node("keyboard_teleop") {
       vel_publisher_ = this->create_publisher<custom_interfaces::msg::SetVelocity>("set_velocity", 10);
       timer_ = this->create_wall_timer(
         100ms, std::bind(&KeyboardTeleop::timer_callback, this));
@@ -23,6 +23,7 @@ public:
 
 private:
    void timer_callback() {
+      rclcpp::WallRate loop_rate(100);
       input_ = std::getchar();
       if (input_ == 'w' && (velocity_+50) <= MAX_VELOCITY) {
          velocity_ += 50;
@@ -35,7 +36,7 @@ private:
       }
 
       if (changes_) {
-         for (i=1; i<=4; i++) {
+         for (int i=1; i<=4; i++) {
             msg_.id = i;
             msg_.velocity = velocity_;
             if (i == 1 || i == 2) { msg_.velocity *= -1; };
@@ -46,9 +47,8 @@ private:
    }
    rclcpp::Publisher<custom_interfaces::msg::SetVelocity>::SharedPtr vel_publisher_;
    rclcpp::TimerBase::SharedPtr timer_;
-   rclcpp::WallRate loop_rate(10ms);
    custom_interfaces::msg::SetVelocity msg_;
-   velocity_ = 0;
+   int32_t velocity_ = 0;
    char input_;
    bool changes_ = false;
 };

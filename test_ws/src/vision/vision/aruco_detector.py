@@ -44,41 +44,88 @@ class ArucoDetector(Node):
         self.timer = self.create_timer(self.timer_period, self.aruco_callback)
         self.bridge = CvBridge()
 
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
     def aruco_callback(self):
         
-        # Load input image
-        path_image = "/home/miguelub/Documents/GitHub/ERC2024/test_ws/src/vision/vision/test_images/singlemarkerssource.png"  # !!! Change the path to your image !!!
-        image = cv2.imread(path_image) 
+        if self.cap.isOpened():
+            ret, image = self.cap.read()
 
-        # Convert the image to grayscale    
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # Convert the image to grayscale    
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        # Define the ArUco dictionary (you can choose different dictionaries)
-        aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_6X6_250)
+            # Define the ArUco dictionary (you can choose different dictionaries)
+            aruco_dict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT["DICT_4X4_250"])
 
-        # Define parameters for the marker detection
+            # Define parameters for the marker detection
+            parameters = cv2.aruco.DetectorParameters()
+
+            # Detect markers in the image
+            corners, ids, rejected = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+
+            # Check if ArUco markers are detected
+            if len(corners) > 0:
+
+                # Draw the detected markers on the image
+                image_with_markers = cv2.aruco.drawDetectedMarkers(image.copy(), corners, ids)
+    
+                # Convert the image to ROS Image message
+                ros_image_msg = self.bridge.cv2_to_imgmsg(image_with_markers, encoding="bgr8")
+                
+                # Publish the ROS Image message
+                self.publisher_image.publish(ros_image_msg)
+                self.get_logger().info("ArUco image published")
+                
+                marker_string = String()
+                marker_string.data = f"ArUco markers detected: {', '.join(map(str, ids.flatten()))}"
+                # Publish the marker string
+                self.publisher_marker.publish(marker_string)
+                self.get_logger().info(marker_string.data)
+
+                for (markerCorner, markerID) in zip(corners, ids.flatten()):
+
+                    corners = markerCorner.reshape((4, 2))
+                    (topLeft, topRight, bottomRight, bottomLeft) = corners
+
+                    topRight = (int(topRight[0]), int(topRight[1]))
+                    bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
+                    bottomLeft = (int(bottomLeft[0]), int(bottomLeft[1]))
+                    topLeft = (int(topLeft[0]), int(topLeft[1]))
+
+                    # Draw the bounding box of the ArUco detection
+                    cv2.line(image, topLeft, topRight, (0, 255, 0), 2)
+                    cv2.line(image, topRight, bottomRight, (0, 255, 0), 2)
+                    cv2.line(image, bottomRight, bottomLeft, (0, 255, 0), 2)
+                    cv2.line(image, bottomLeft, topLeft, (0, 255, 0), 2)
+
+                    # Compute and draw the center (x, y)-coordinates of the ArUco marker
+                    cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+                    cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+                    cv2.circle(image, (cX, cY), 4, (0, 0, 255), -1)
+
+
+    def pose_estimation(self, frame, aruco_dict, matrix_coefficients, distortion_coefficients):
+
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        cv2.aruco_dict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT[aruco_dict])
         parameters = cv2.aruco.DetectorParameters()
 
-        # Detect markers in the image
-        corners, ids, rejected = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+        corners, ids, rejected = cv2.aruco.detectMarkers(gray, cv2.aruco_dict, parameters=parameters, 
+                                                         cameraMatrix=matrix_coefficients, distCoeff=distortion_coefficients) 
 
-        # Draw the detected markers on the image
-        image_with_markers = cv2.aruco.drawDetectedMarkers(image.copy(), corners, ids)
-  
-        # Convert the image to ROS Image message
-        ros_image_msg = self.bridge.cv2_to_imgmsg(image_with_markers, encoding="bgr8")
-
-        # Publish the ROS Image message
-        self.publisher_image.publish(ros_image_msg)
-        self.get_logger().info("ArUco image published")
-
-        # Check if ArUco markers are detected
         if len(corners) > 0:
-            marker_string = String()
-            marker_string.data = f"ArUco markers detected: {', '.join(map(str, ids.flatten()))}"
-            # Publish the marker string
-            self.publisher_marker.publish(marker_string)
-            self.get_logger().info(marker_string.data)
+            for i in range(0, len(ids)):
+                rvec, tvec, markerPoints = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.02, matrix_coefficients, distortion_coefficients)  
+
+                cv2.aruco.drawDetectedMarkers(frame, corners)
+
+                #cv2.aruco.drawFrameAxes(frame, matrix_coefficients, distortion_coefficients, rvec[i], tvec[i], 0.01)
+
+        return frame
+
+
 
 def main(args=None):
     rclpy.init(args=args)

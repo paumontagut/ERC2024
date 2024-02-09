@@ -21,6 +21,7 @@ find_package(ament_cmake_python REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclpy REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(custom_interfaces REQUIRED)
 
 # Create a cpp executable
 add_executable(ejemplo src/ejemplo.cpp)
@@ -29,10 +30,14 @@ ament_target_dependencies(ejemplo rclcpp)
 add_executable(subscriber_member_function src/subscriber_member_function.cpp)
 ament_target_dependencies(subscriber_member_function rclcpp geometry_msgs)
 
+add_executable(keyboard_teleop src/keyboard_teleop.cpp)
+ament_target_dependencies(keyboard_teleop rclcpp custom_interfaces)
+
 # Install cpp executables
 install(TARGETS
   ejemplo
   subscriber_member_function
+  keyboard_teleop
   DESTINATION lib/${PROJECT_NAME})
 
 # Install python modules

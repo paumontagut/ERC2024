@@ -48,6 +48,7 @@ class ArucoDetector(Node):
 
         self.bridge = CvBridge()
         self.image = None
+        self.cap = cv2.VideoCapture(0)
 
         # Aruco Dictionary Parameter
         self.aruco_type = self.get_parameter('aruco_dict').get_parameter_value().string_value
@@ -62,9 +63,9 @@ class ArucoDetector(Node):
 
         if self.camera_activation:
             self.subcriber_camera = self.create_subscription(Image, 'color/image_raw', self.camera_callback, 10) # Subscriber for Camera Image
+            self.cap.release()
 
         else:    
-            self.cap = cv2.VideoCapture(0)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
@@ -82,9 +83,9 @@ class ArucoDetector(Node):
         if self.camera_activation and self.image is not None:
             image = self.image.copy()
         elif self.cap.isOpened():
-            ret, frame = self.cap.read()
+            ret, image = self.cap.read()
         
-        self.aruco_show(frame)
+        self.aruco_show(image)
 
     def pose_estimation(self, frame, aruco_dict, matrix_coefficients, distortion_coefficients):
 

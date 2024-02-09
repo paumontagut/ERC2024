@@ -1,5 +1,8 @@
 #include <chrono>
 #include <cstdio>
+#include <unistd.h>
+#include <termios.h>
+#include <stdlib.h>
 
 #include "rclcpp/rclcpp.hpp"
 #include "custom_interfaces/msg/set_velocity.hpp"
@@ -10,6 +13,9 @@ using namespace std::chrono_literals;
 #define MAX_ID 4
 #define MIN_VELOCITY -500
 #define MAX_VELOCITY 500
+
+char c;
+struct termios orig_termios;
 
 
 class KeyboardTeleop : public rclcpp::Node {
@@ -24,11 +30,10 @@ public:
 private:
    void timer_callback() {
       rclcpp::WallRate loop_rate(100);
-      input_ = std::getchar();
-      if (input_ == 'w' && (velocity_+50) <= MAX_VELOCITY) {
+      if (c == 'w' && (velocity_+50) <= MAX_VELOCITY) {
          velocity_ += 50;
          changes_ = true;
-      } else if (input_ == 's' && (velocity_-50) >= MIN_VELOCITY) {
+      } else if (c == 's' && (velocity_-50) >= MIN_VELOCITY) {
          velocity_ -= 50;
          changes_ = true;
       } else {
@@ -49,13 +54,28 @@ private:
    rclcpp::TimerBase::SharedPtr timer_;
    custom_interfaces::msg::SetVelocity msg_;
    int32_t velocity_ = 0;
-   char input_;
    bool changes_ = false;
 };
 
+void disableRawMode() {
+   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+}
+
+void enableRawMode() {
+   tcgetattr(STDIN_FILENO, &orig_termios);
+   atexit(disableRawMode);
+
+   struct termios raw = orig_termios;
+   raw.c_lflag &= ~(ECHO | ICANON);
+
+   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+}
+
 int main(int argc, char *argv[]) {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<KeyboardTeleop>());
-  rclcpp::shutdown();
-  return 0;
+   enableRawMode();
+   rclcpp::init(argc, argv);
+   rclcpp::spin(std::make_shared<KeyboardTeleop>());
+   while (read(STDIN_FILENO, &c, 1) == 1);
+   rclcpp::shutdown();
+   return 0;
 }

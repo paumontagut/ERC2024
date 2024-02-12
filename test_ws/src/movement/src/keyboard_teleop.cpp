@@ -1,3 +1,10 @@
+///////////////////////////////////////////////////////////////////////////////
+//                       *** TELEOPERATING NODE ***
+//
+// This node allows the user to control the rover using their keyboard
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #include <chrono>
 #include <cstdio>
 #include <stdio.h>
@@ -49,8 +56,9 @@ int getch(void) {
 class KeyboardTeleop : public rclcpp::Node {
 public:
   KeyboardTeleop()
-  : Node("keyboard_teleop") {
-      vel_publisher_ = this->create_publisher<custom_interfaces::msg::SetVelocity>("set_velocity", 10);
+  : Node("keyboard_teleop") { // Defines a /set_velocity publisher associated to a timer
+      vel_publisher_ = this->create_publisher
+         <custom_interfaces::msg::SetVelocity>("set_velocity", 10);
       timer_ = this->create_wall_timer(
         500ms, std::bind(&KeyboardTeleop::timer_callback, this));
   }

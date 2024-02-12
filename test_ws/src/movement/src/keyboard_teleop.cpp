@@ -1,8 +1,8 @@
 #include <chrono>
 #include <cstdio>
 #include <stdio.h>
- #include <unistd.h>
- #include <termios.h>
+#include <unistd.h>
+#include <termios.h>
 
 #include "rclcpp/rclcpp.hpp"
 #include "custom_interfaces/msg/set_velocity.hpp"
@@ -15,9 +15,10 @@ using namespace std::chrono_literals;
 #define MAX_VELOCITY 500
 
 char c;
-rclcpp::WallRate loop_rate(100);
+rclcpp::WallRate loop_rate(10ms);
 
 
+// Get character from user input without needing to press enter
 int getch(void) {
    int ch;
    struct termios oldt;
@@ -56,19 +57,19 @@ public:
 
 private:
    void timer_callback() {
-      c = getch();
-      if (c == 'w' && (velocity_+50) <= MAX_VELOCITY) {
+      c = getch(); // Get input from user
+      if (c == 'w' && (velocity_+50) <= MAX_VELOCITY) { // w = Forward
          velocity_ += 50;
-         changes_ = true;
-      } else if (c == 's' && (velocity_-50) >= MIN_VELOCITY) {
+         changes_ = true; // Velocity change
+      } else if (c == 's' && (velocity_-50) >= MIN_VELOCITY) { // s = Backward
          velocity_ -= 50;
          changes_ = true;
       } else {
          changes_ = false;
       }
 
-      if (changes_) {
-         for (int i=1; i<=4; i++) {
+      if (changes_) { // If user has requested to change velocity:
+         for (int i=1; i<=4; i++) { // Update all motors
             msg_.id = i;
             msg_.velocity = velocity_;
             vel_publisher_->publish(msg_);

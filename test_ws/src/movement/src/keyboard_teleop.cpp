@@ -71,7 +71,6 @@ private:
          for (int i=1; i<=4; i++) {
             msg_.id = i;
             msg_.velocity = velocity_;
-            if (i == 1 || i == 2) { msg_.velocity *= -1; };
             vel_publisher_->publish(msg_);
             loop_rate.sleep();
          }

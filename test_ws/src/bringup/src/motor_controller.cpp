@@ -1,11 +1,18 @@
-// sudo usermod -aG dialout <linux_account>
+///////////////////////////////////////////////////////////////////////////////
+//                     *** DYNAMIXEL MOTOR ROS2 NODE ***
 //
-// Terminal 1
+//
+//                         * Enable USB port access *
+// >> sudo usermod -aG dialout <linux_account>
+//
+//                               * Start node *
 // >> ros2 run bringup motor_controller
 //
-// Terminal 2
+//             * Send SetVelocity messages to /set_velocity topic *
+//                             1 unit = 0.229 rpm
 // >> ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 500}"
 //
+///////////////////////////////////////////////////////////////////////////////
 
 #include <cstdio> // Dynamixel SDK
 #include <memory> // Dynamixel SDK
@@ -49,9 +56,10 @@ MotorController::MotorController()
    int8_t qos_depth = 0;
    this->get_parameter("qos_depth", qos_depth);
 
-   const auto QOS_RKL10V =
+   const auto QOS_RKL10V = // Defines QoS
     rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
 
+   // Subscribes to set_velocity topic and defines its callback
    set_velocity_subscriber_ =
       this->create_subscription<SetVelocity>(
       "set_velocity",
@@ -62,7 +70,7 @@ MotorController::MotorController()
          // Velocity value
          uint32_t goal_velocity = (unsigned int)msg->velocity;
 
-         // Write goal velocity (4 bytes)
+         // Send goal velocity (4 bytes) to the DYNAMIXEL
          dxl_comm_result =
          packetHandler->write4ByteTxRx(
             portHandler, 
@@ -82,6 +90,7 @@ MotorController::MotorController()
       }
    );
 
+   // Defines a service to get the motor's current velocity
    auto get_current_velocity =
       [this](
       const std::shared_ptr<GetVelocity::Request> request,

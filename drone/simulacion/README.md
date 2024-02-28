@@ -22,10 +22,12 @@ rqt_image_view
 
 
 
-### Pruebas desde terminal
+### Envío de comandos desde terminal
 ```
 source /opt/ros/noetic/setup.bash
 rostopic pub --once /bebop/takeoff std_msgs/Empty
 rostopic pub --once /bebop/cmd_vel geometry_msgs/Twist '{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.2}}’
 ```
+### Programa
+(Proximamente...)
 

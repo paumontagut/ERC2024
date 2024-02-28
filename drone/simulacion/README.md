@@ -1,4 +1,4 @@
-# UJI ROBOTICS - ERC2024 - Drone parrot bebop 2
+# UJI ROBOTICS - ERC2024 - Drone parrot bebop 2 - Simulación
 
 
 ### Lanzamiento modo simulación

@@ -1,0 +1,2 @@
+simulacion
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/install -G Unix Makefiles

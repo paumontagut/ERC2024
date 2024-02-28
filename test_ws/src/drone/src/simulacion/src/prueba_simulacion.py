@@ -12,8 +12,10 @@ from cv_bridge import CvBridge, CvBridgeError
 
 bridge = CvBridge()
 
-global x 
-x =  0
+x = 0
+y = 0
+z = 0
+
 
 def image_callback(msg):
     print("Llamada a Callback ______                                  LC")
@@ -25,11 +27,14 @@ def image_callback(msg):
         print(e)
     else:
         cv2.imshow('cv_img', image_np)
-        key = cv2.waitKey(5)
+        cv2.waitKey(5)
 
 def pose_callback(msg):
-    print(msg)
-    x = msg.position.x
+     print(msg)
+     global x, y, z
+     x = msg.position.x
+     y = msg.position.y
+     z = msg.position.z
 
 
 def main():
@@ -44,10 +49,10 @@ def main():
     print("Nodo suscrito a . . . .                                     NS")
     print("\t\t", image_topic)
 
-    image_topic = '/bebop2/odometry_sensor1/pose'
-    rospy.Subscriber(image_topic, Pose, pose_callback)
+    pose_topic = '/bebop2/odometry_sensor1/pose'
+    rospy.Subscriber(pose_topic, Pose, pose_callback)
     print("Nodo suscrito a . . . .                                     NS")
-    print("\t\t", image_topic)
+    print("\t\t", pose_topic)
 
     print("Nodo publica a .. .. ..                                     NP")
 
@@ -76,7 +81,17 @@ def main():
         # Esperar un período de 3 seg 
         rospy.sleep(3)
 
-        print(x)
+        twist_msg = Twist()
+
+        while (z < 5):
+            twist_msg.linear.z = 0.5 
+
+            # Publicar el mensaje Twist
+            pub_vel.publish(twist_msg)
+            rospy.sleep(0.2)
+
+            rate.sleep()
+        
 
 
 

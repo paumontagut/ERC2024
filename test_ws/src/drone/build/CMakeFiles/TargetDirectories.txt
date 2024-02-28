@@ -35,12 +35,14 @@
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/gtest/googletest/CMakeFiles/test.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/gtest/googletest/CMakeFiles/gtest_main.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/gtest/googletest/CMakeFiles/gtest.dir
-/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/install/local.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/rebuild_cache.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/edit_cache.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/test.dir
+/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/install/local.dir
+/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/geometry_msgs_generate_messages_eus.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/std_msgs_generate_messages_py.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/std_msgs_generate_messages_nodejs.dir
+/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/geometry_msgs_generate_messages_py.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/roscpp_generate_messages_cpp.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/roscpp_generate_messages_eus.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/rosgraph_msgs_generate_messages_nodejs.dir
@@ -48,6 +50,7 @@
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/std_msgs_generate_messages_lisp.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/roscpp_generate_messages_py.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/install.dir
+/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/geometry_msgs_generate_messages_lisp.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/std_msgs_generate_messages_eus.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/roscpp_generate_messages_nodejs.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/rosgraph_msgs_generate_messages_cpp.dir
@@ -55,5 +58,7 @@
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/std_msgs_generate_messages_cpp.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/rosgraph_msgs_generate_messages_eus.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir
+/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/geometry_msgs_generate_messages_nodejs.dir
+/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/geometry_msgs_generate_messages_cpp.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/roscpp_generate_messages_lisp.dir
 /home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/build/simulacion/CMakeFiles/rosgraph_msgs_generate_messages_py.dir

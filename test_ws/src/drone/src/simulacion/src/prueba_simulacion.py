@@ -70,32 +70,24 @@ def main():
     
     rate = rospy.Rate(30)
 
-    while not rospy.is_shutdown():
 
-         # Inicializar un mensaje Empty
-        takeoff_msg = Empty()
+        # Inicializar un mensaje Empty
+    takeoff_msg = Empty()
 
-         # Publicar el mensaje una sola vez
-        pub_takeof.publish(takeoff_msg)
+        # Publicar el mensaje una sola vez
+    pub_takeof.publish(takeoff_msg)
 
-        # Esperar un período de 3 seg 
-        rospy.sleep(3)
+    # Esperar un período de 3 seg 
+    rospy.sleep(3)
 
-        twist_msg = Twist()
+    twist_msg = Twist()
 
-        while (z < 5):
-            twist_msg.linear.z = 0.5 
+    while (z < 5 and not rospy.is_shutdown()):
+        twist_msg.linear.z = 0.5 
 
-            # Publicar el mensaje Twist
-            pub_vel.publish(twist_msg)
-            rospy.sleep(0.2)
-
-            rate.sleep()
-        
-
-
-
-
+        # Publicar el mensaje Twist
+        pub_vel.publish(twist_msg)
+        rospy.sleep(0.2)
 
         rate.sleep()
 

@@ -6,7 +6,7 @@
 * ROS Noetic (En futuras actualizaciones posiblemente disponible en ROS2)
 
  ### Instalación de paquetes y dependencias relativas
- Se crea un workespace bebop_ws donde almacenar los paquetes y programas del drone
+ Se crea un workespace bebop_ws donde almacenar los paquetes y programas del drone.
 ```
 mkdir -p bebop_ws/src && cd bebop_ws/src
 

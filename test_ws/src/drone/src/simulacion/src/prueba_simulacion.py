@@ -7,6 +7,7 @@ from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import CompressedImage
 import numpy as np
+from time import time
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -40,14 +41,15 @@ def pose_callback(msg):
 
 def main():
     global x, y, z
+    takeoff_duration = 3
 
     rospy.init_node('Prueba_drone')
     print(".. Nodo inicializado ...................................... NI")
 
     print("Nodo publica a .. .. ..                                     NP")
-    takeof_topic = '/bebop/takeoff'
-    pub_takeof = rospy.Publisher(takeof_topic, Empty, queue_size=10)
-    print("\t\t", takeof_topic)
+    takeoff_topic = '/bebop/takeoff'
+    pub_takeoff = rospy.Publisher(takeoff_topic, Empty, queue_size=10)
+    print("\t\t", takeoff_topic)
 
     land_topic = '/bebop/land'
     pub_land = rospy.Publisher(land_topic, Empty, queue_size=10)
@@ -58,17 +60,21 @@ def main():
     print("\t\t", vel_topic)
 
     rate = rospy.Rate(30)
-
-    # Inicializar un mensaje Empty
+   # Inicializar un mensaje Empty para despegar
     takeoff_msg = Empty()
 
-    # Publicar el mensaje de despegue una sola vez
-    pub_takeof.publish(takeoff_msg)
-    
-    print("Despega")
-    # Esperar un período de 3 seg
-    rospy.sleep(30)
-    print("YA")
+    start_time = time()  # Tiempo de inicio del despegue
+
+    # Publicar el mensaje de despegue
+    pub_takeoff.publish(takeoff_msg)
+
+    # Esperar el tiempo de despegue definido
+    while time() - start_time < takeoff_duration and not rospy.is_shutdown():
+        rate.sleep()
+
+    # Detener el despegue
+    pub_land.publish(Empty())
+
 
     # Suscripciones a tópicos
     image_topic = '/bebop2/camera_base/image_raw/compressed'

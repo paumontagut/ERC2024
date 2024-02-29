@@ -56,15 +56,15 @@ def main():
 
     print("Nodo publica a .. .. ..                                     NP")
 
-    takeof_topic = '/bebop/takeoff'
+    takeof_topic = '/bebop2/takeoff'
     pub_takeof = rospy.Publisher(takeof_topic, Empty, queue_size=10)
     print("\t\t", takeof_topic)
 
-    land_topic = '/bebop/land'
+    land_topic = '/bebop2/land'
     pub_land = rospy.Publisher(land_topic, Empty, queue_size=10)
     print("\t\t", land_topic)
 
-    vel_topic = '/bebop/cmd_vel'
+    vel_topic = '/bebop2/cmd_vel'
     pub_vel = rospy.Publisher(vel_topic, Twist, queue_size=10)
     print("\t\t", vel_topic)
     

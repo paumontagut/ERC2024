@@ -17,6 +17,7 @@ roslaunch rotors_gazebo mav_velocity_control_with_fake_driver.launch
 ```
 source /opt/ros/noetic/setup.bash
 rqt_image_view
+
 ```
 #### Selecionar /bebop2/camera_base/image_raw/compressed
 
@@ -27,6 +28,7 @@ rqt_image_view
 source /opt/ros/noetic/setup.bash
 rostopic pub --once /bebop/takeoff std_msgs/Empty
 rostopic pub --once /bebop/cmd_vel geometry_msgs/Twist '{linear: {x: 0.5, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.2}}’
+
 ```
 ### Programa
 Prueba de simulación de parrot en rospy 

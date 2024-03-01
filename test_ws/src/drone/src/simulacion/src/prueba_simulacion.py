@@ -7,7 +7,7 @@ from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import CompressedImage
 import numpy as np
-from time import time
+import os
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -17,9 +17,11 @@ x = 0
 y = 0
 z = 0
 
+image_np = None
 
 def image_callback(msg):
     print("Llamada a Callback ______                                  LC")
+    global image_np
     try:
         np_arr = np.frombuffer(msg.data, np.uint8)
         image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
@@ -41,7 +43,7 @@ def pose_callback(msg):
 
 def main():
     global x, y, z
-    takeoff_duration = 30
+    global image_np
 
     rospy.init_node('Prueba_drone')
     print(".. Nodo inicializado ...................................... NI")
@@ -104,7 +106,9 @@ def main():
 
         rate.sleep()
 
-    
+    # Guardar la imagen de la camara
+    cv2.imwrite("./imagenes/imagen1.jpg", image_np)
+
     # Detener el despegue
     pub_land.publish(Empty())
 

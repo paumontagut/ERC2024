@@ -41,12 +41,16 @@ def pose_callback(msg):
 
 def main():
     global x, y, z
-    takeoff_duration = 3
+    takeoff_duration = 30
 
     rospy.init_node('Prueba_drone')
     print(".. Nodo inicializado ...................................... NI")
 
     print("Nodo publica a .. .. ..                                     NP")
+    reset_topic = '/bebop/reset'
+    pub_reset = rospy.Publisher(reset_topic, Empty, queue_size=10)
+    print("\t\t", reset_topic)
+    
     takeoff_topic = '/bebop/takeoff'
     pub_takeoff = rospy.Publisher(takeoff_topic, Empty, queue_size=10)
     print("\t\t", takeoff_topic)
@@ -60,20 +64,21 @@ def main():
     print("\t\t", vel_topic)
 
     rate = rospy.Rate(30)
+
+    #reset_msg = Empty()
+    #pub_reset.publish(reset_msg)
+
    # Inicializar un mensaje Empty para despegar
     takeoff_msg = Empty()
 
-    start_time = time()  # Tiempo de inicio del despegue
-
+   # Tiempo de inicio del despegue
+    rospy.sleep(5)
+    
     # Publicar el mensaje de despegue
     pub_takeoff.publish(takeoff_msg)
 
     # Esperar el tiempo de despegue definido
-    while time() - start_time < takeoff_duration and not rospy.is_shutdown():
-        rate.sleep()
-
-    # Detener el despegue
-    pub_land.publish(Empty())
+    rospy.sleep(4.5)
 
 
     # Suscripciones a tópicos
@@ -98,6 +103,10 @@ def main():
         rospy.sleep(0.2)
 
         rate.sleep()
+
+    
+    # Detener el despegue
+    pub_land.publish(Empty())
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,7 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    # TODO: Hecho con el chatgpt, falta revisar
+    # TODO: Hecho con el chatgpt, falta revisar, entender y organiuzar explicación
     
     video_device_0 = LaunchConfiguration('video_device_0')
     video_device_2 = LaunchConfiguration('video_device_2')

@@ -20,7 +20,7 @@ setup(
     maintainer_email='al415553@uji.es',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
+    # tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'aruco_detector = vision.aruco_detector:main',

@@ -3,49 +3,65 @@
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
+
+# Pasar argumentos desde la terminal
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 
-
 def generate_launch_description():
-    # TODO: Hecho con el chatgpt, falta revisar, entender y organiuzar explicación
+    # ================= ARGUMENTOS =================
+    # Pasados directamente desde robot_bringup.launch.py
+    # También se pueden pasar desde la terminal para pruebas de este launch concreto.
+    # La descripción y el valor por defecto se pueden ver con `ros2 launch ... --show-args`
+    # Se crean 2 cosas: el launchconfiguration (que es el valor que se pasa como tal, se puede usar como argumento para los nodos)...
+    # y el declarelaunchargument (que es el hecho de poder recibir un argumento en sí, también necesario)
     
-    video_device_0 = LaunchConfiguration('video_device_0')
-    video_device_2 = LaunchConfiguration('video_device_2')
-
-    video_device_0_launch_arg = DeclareLaunchArgument(
-        'video_device_0',
-        default_value='/dev/video0',
-        description="Device file for the first camera"
+    # Cámara 1
+    path_camara1 = LaunchConfiguration('path_camara1') 
+    path_camara1_arg = DeclareLaunchArgument(
+        'path_camara1',
+        description="Device file for the first camera",
+        default_value='/dev/video0'
     )
-
-    video_device_2_launch_arg = DeclareLaunchArgument(
-        'video_device_2',
-        default_value='/dev/video2',
-        description="Device file for the second camera"
+    
+    # Cámara 2
+    path_camara2 = LaunchConfiguration('path_camara2')
+    path_camara2_arg = DeclareLaunchArgument(
+        'path_camara2',
+        description="Device file for the second camera",
+        default_value='/dev/video2'
     )
-
-    # First camera node
-    camera_0_node = Node(
+    
+    # ================= NODOS A EJECUTAR =================
+    # En este caso, son equivalentes a los nodos que se lanzarían con `ros2 run v4l2_camera v4l2_camera_node --ros-args -p video_device:=/dev/video0 -r /image_raw:=/camara_logitech_1/image_raw` o con lo mismo pero cambiando para la cámara 2.
+    # El paquete v4l2_camera está en /opt/ros/humble...
+    # En los siguientes nodos se modifica el topic donde publica cada cámara, ya que por defecto es siempre /image_raw.
+    
+    # Cámara 1
+    camara1_nodo = Node(
         package='v4l2_camera',
         executable='v4l2_camera_node',
-        name='camera_0',
-        parameters=[{'video_device': video_device_0}],
-        remappings=[('/image_raw', '/camera_0/image_raw')]
-    )
+        name='camara_logitech_1',    # Nombre del nodo
+        parameters=[{'video_device': path_camara1}],
+        remappings=[('/image_raw', '/camara_logitech_1/image_raw')]
+    ) 
 
-    # Second camera node
-    camera_2_node = Node(
+    # Cámara 2
+    camara2_nodo = Node(
         package='v4l2_camera',
         executable='v4l2_camera_node',
-        name='camera_2',
-        parameters=[{'video_device': video_device_2}],
-        remappings=[('/image_raw', '/camera_2/image_raw')]
+        name='camara_logitech_2',
+        parameters=[{'video_device': path_camara2}],
+        remappings=[('/image_raw', '/camara_logitech_2/image_raw')]
     )
-
+    
+    # ================= LANZAR NODOS =================
+    # Necesario devolver los argumentos para que el robot_bringup pueda pasarlos
+    # Y también lanzamos todos los nodos creados
+    
     return LaunchDescription([
-        video_device_0_launch_arg,
-        video_device_2_launch_arg,
-        camera_0_node,
-        camera_2_node
+        path_camara1_arg,
+        path_camara2_arg,
+        camara1_nodo,
+        camara2_nodo
     ])

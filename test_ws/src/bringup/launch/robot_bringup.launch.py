@@ -10,140 +10,95 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # TODO: arreglar topics, los comentados son pq no se si se usan
+    # TODO: Acabar
+    # Ver argumentos posibles para pasar al bringup desde la terminal:
+    # ros2 launch bringup robot_bringup.launch.py --show-args
+    # ros2 launch bringup robot_bringup.launch.py usb_port:=/dev/ttyACM0 ...
     
-    """
-    usb_port = LaunchConfiguration('usb_port')
-    semaforo_topic = LaunchConfiguration('semaforo')
-
-    usb_port_launch_arg = DeclareLaunchArgument(                          
-        'usb_port',
-        default_value = '/dev/ttyACM0'
-    )
+    ############## QUÉ ES ESTO FOUNDERS?????? ################
     
-    semaforo_launch_arg = DeclareLaunchArgument(
-        'semaforo_topic',
-        default_value='/semaforo',
-        description="Topic to control the emergency lamp"
-    )
-    """
+    # usb_port = LaunchConfiguration('usb_port')
+    # usb_port_launch_arg = DeclareLaunchArgument(
+    #     'usb_port',
+    #     default_value='/dev/ttyACM0'
+    # )
     
+    ############## Logitech Camera ##############
+    # TODO: Configuración parámetros cámara, resolución, frames... en un yaml?
     
-    ############## Logitech Camera Node ####
+    LEFT_CAMERA_PATH = '/dev/video0'
+    RIGHT_CAMERA_PATH = '/dev/video2'
     
-    # TODO: Haciendo, revisar que vaya
     logitech_camera_launch = IncludeLaunchDescription(
+        # Aquí se llama al logitech_cameras.launch.py y se le pasan los argumentos que hagan falta. 
         PythonLaunchDescriptionSource(
+            # Se une el path del paquete + carpeta launch + el launch que queremos lanzar.
             os.path.join(get_package_share_directory('camera_management'), 'launch', 'logitech_cameras.launch.py')
         ),
         launch_arguments={
-            'video_device_0': '/dev/video0',
-            'video_device_2': '/dev/video2'
+            'path_camara1': LEFT_CAMERA_PATH,
+            'path_camara2': RIGHT_CAMERA_PATH
+        }.items()
+    )
+    
+    ############### Realsense Camera ##############
+    # TODO: Falta testear
+    
+    realsense_align_depth = LaunchConfiguration('camera_align_depth')
+    realsense_pointcloud = LaunchConfiguration('camera_pointcloud')
+    realsense_depth = LaunchConfiguration('camera_depth')
+
+    realsense_align_depth_launch_arg = DeclareLaunchArgument(
+        'camera_align_depth',
+        default_value='False'
+    )
+    realsense_pointcloud_launch_arg = DeclareLaunchArgument(
+        'camera_pointcloud',
+        default_value='False'
+    )
+    realsense_depth_launch_arg = DeclareLaunchArgument(
+        'camera_depth',
+        default_value='True'
+    )
+
+    realsense_camera_launch = IncludeLaunchDescription(
+        # Usamos el launch ya creado en realsense2_camera, a diferencia de lo que se hizo con las Logitech.
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('realsense2_camera'), 'launch', 'rs_launch.py')
+        ),
+        launch_arguments={
+            'align_depth.enable': realsense_align_depth,
+            'pointcloud.enable': realsense_pointcloud,
+            'enable_depth': realsense_depth
         }.items()
     )
 
-    # TODO: ES NECESARIO?
-    logitech_cameras_node = Node(
-        package='v4l2_camera',
-        executable='v4l2_camera_node',
-        name='logitech_camera',
-        parameters=[{'video_device': '/dev/video0'}]  # Adjust device path as needed
-    )
-
-
-    ############## Unitree ##################
-
-    # TODO: ya se puede hacer
+    ############## Unitree Lidar ##################
+    # TODO: Testear ft. Pau. Poner ficheros de ros2_ws de la jetson aquí, agregar configuración rviz para visualizar...
+    PUERTO_USB_LIDAR = '/dev/ttyUSB0'
     
-    ########### Realsense Cámera ###################
-    
-    """
-    camera_align_depth = LaunchConfiguration('camera_align_depth')
-    camera_pointcloud = LaunchConfiguration('camera_pointcloud')
-    camera_depth = LaunchConfiguration('camera_depth')
-    
-    
-    camera_align_depth_launch_arg = DeclareLaunchArgument(
-        'camera_align_depth',
-        default_value='False',
-        description="Enable alignment of depth with color"
+    unitree_lidar_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('unitree_lidar_ros2'), 'launch', 'launch.py')
+        ),
+        launch_arguments={
+            'serial_port': PUERTO_USB_LIDAR
+        }.items()
     )
-
-    camera_pointcloud_launch_arg = DeclareLaunchArgument(
-        'camera_pointcloud',
-        default_value='False',
-        description="Enable pointcloud streaming"
-    )
-
-    camera_depth_launch_arg = DeclareLaunchArgument(
-        'camera_depth',
-        default_value='True',
-        description="Enable depth camera"
-    )
-
-    realsense_camera_node = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('realsense2_camera'), 'launch'),
-            '/rs_launch.py']),
-            
-        launch_arguments = {
-            'align_depth.enable': camera_align_depth,
-            'pointcloud.enable': camera_pointcloud,
-            'enable_depth': camera_depth
-        }.items(),
-    )
-    
-    ############## LIDAR ##################
-    
-    # TODO: esto ya estaba así, está bien?
-    lidar_node = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('sllidar_ros2'), 'launch'),
-            '/view_sllidar_s2_launch.py'])
-    )
-
 
     ############## SIYI CAMERA ##############
-    
     # TODO: Falta implementar
-    siyi_camera_node = Node(
-        package='siyi_camera',
-        executable='siyi_camera_node',
-        name='siyi_camera',
-        parameters=[{'camera_topic': '/siyi_camera/image_raw'}]
-    )
-    
-    ############## UNITREE (lidar 34) ###########
-    
-    # TODO HACER
-
-
     
     ############## SEMÁFORO ##################
-
-    # TODO: Revisar bien
-    semaforo_node = Node(
-        package='semaforo_control',
-        executable='semaforo_node',
-        name='semaforo',
-        parameters=[{'semaforo_topic': semaforo_topic}]
-    )
-
-    """
-
+    # TODO: Falta implementar
+    
+    
     return LaunchDescription([
-        logitech_camera_launch
+        # TODO: Descomentar para probar
+        logitech_camera_launch,
+        # realsense_camera_launch,
+        # lidar_node,
+        # siyi_camera_node
+        # semaforo_launch_arg,
+        # usb_port_launch_arg,
     ])
-        
-    """
-    usb_port_launch_arg,
-    semaforo_launch_arg,
-    camera_align_depth_launch_arg,
-    camera_pointcloud_launch_arg,
-    camera_depth_launch_arg,
-    realsense_camera_node,
-    lidar_node,
-    siyi_camera_node,
-    unitree_node,
-    semaforo_node
-    """

@@ -20,6 +20,7 @@ setup(
     license='TODO: License declaration',
     entry_points={
         'console_scripts': [
+            # TODO: Creo que esto no se está usando?:
             'camera_node = camera_management.camera_node:main',
         ],
     },

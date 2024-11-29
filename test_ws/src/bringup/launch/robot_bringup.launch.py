@@ -24,6 +24,7 @@ def generate_launch_description():
     # )
     
     ############## Logitech Camera ##############
+    # Funciona bien
     # TODO: Configuración parámetros cámara, resolución, frames... en un yaml?
     
     LEFT_CAMERA_PATH = '/dev/video0'
@@ -41,6 +42,16 @@ def generate_launch_description():
         }.items()
     )
     
+    ############### CMD_VEL #######################
+    # TODO: Testear
+    
+    motor_controller_node = Node(
+        package='bringup',
+        executable='motor_controller',
+        name='motor_controller_node',
+        output='screen'
+    )
+
     ############### Realsense Camera ##############
     # TODO: Falta testear
     
@@ -96,6 +107,7 @@ def generate_launch_description():
     return LaunchDescription([
         # TODO: Descomentar para probar
         logitech_camera_launch,
+        motor_controller_node,
         # realsense_camera_launch,
         # lidar_node,
         # siyi_camera_node

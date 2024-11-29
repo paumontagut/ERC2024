@@ -25,7 +25,7 @@ Estar en ~/ERC2024/test_ws
 
 - launches extra que se llaman desde bringup.
 - De momento solo están las logitech.
-- `ros2 launch camera_management logitech_camera.launch.py`
+- `ros2 launch camera_management logitech_cameras.launch.py`
 
 **custom_interfaces**
 

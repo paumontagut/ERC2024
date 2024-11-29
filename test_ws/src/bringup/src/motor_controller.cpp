@@ -36,7 +36,7 @@
 #define PROTOCOL_VERSION 2.0
 
 // Default setting
-#define BAUDRATE 115200 // 57600 Default baudrate
+#define BAUDRATE 1000000 // 57600 Default baudrate
 #define DEVICE_NAME "/dev/ttyUSB0" // ls /dev/ttyUSB* to find the correct device name
 
 dynamixel::PortHandler *portHandler;
@@ -80,13 +80,13 @@ MotorController::MotorController()
             &dxl_error
          );
 
-         if (dxl_comm_result != COMM_SUCCESS) {
-            RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-         } else if (dxl_error != 0) {
-            RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-         } else {
-            RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", msg->id, msg->velocity);
-         }
+	if (dxl_comm_result != COMM_SUCCESS) {
+	    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
+	} else if (dxl_error != 0) {
+	    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+	} else {
+	    RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", msg->id, msg->velocity);
+	}
       }
    );
 

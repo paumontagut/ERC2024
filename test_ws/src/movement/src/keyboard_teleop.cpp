@@ -67,16 +67,24 @@ private:
    void timer_callback() {
       c = getch(); // Get input from user
       if (c == 'w' && (velocity_+50) <= MAX_VELOCITY) { // w = Forward
+         flag_turn = false;
          velocity_ += 50;
          changes_ = true; // Velocity change
       } else if (c == 's' && (velocity_-50) >= MIN_VELOCITY) { // s = Backward
+      	 flag_turn = false;
          velocity_ -= 50;
          changes_ = true;
+      } else if (c == 'a' && (velocity_-50) >= MIN_VELOCITY) { // a = Left
+      	 velocity_turn += 50;
+      	 flag_turn = true; 
+      } else if (c == 'd' && (velocity_-50) >= MIN_VELOCITY) { // d = Right
+      	 velocity_turn -= 50;
+      	 flag_turn = true; 
       } else {
          changes_ = false;
       }
 
-      if (changes_) { // If user has requested to change velocity:
+      if (changes_ and !flag_turn) { // If user has requested to change linear velocity:
          for (int i=1; i<=4; i++) { // Update all motors
             msg_.id = i;
             msg_.velocity = velocity_;
@@ -84,12 +92,26 @@ private:
             loop_rate.sleep();
          }
       }
+      if (changes_ and flag_turn) { // If user has requested to change angular velocity:
+         for (int i=1; i<=4; i++) { // Update all motors
+           msg_.id = i;
+           if (i < 3){ //right motors
+            msg_.velocity = velocity_turn;
+           }else{
+            msg_.velocity = -velocity_turn;
+           }
+         vel_publisher_->publish(msg_);
+         loop_rate.sleep();
+         }
+      }
    }
    rclcpp::Publisher<custom_interfaces::msg::SetVelocity>::SharedPtr vel_publisher_;
    rclcpp::TimerBase::SharedPtr timer_;
    custom_interfaces::msg::SetVelocity msg_;
    int32_t velocity_ = 0;
+   int32_t velocity_turn = 0;
    bool changes_ = false;
+   bool flag_turn = false;
 };
 
 int main(int argc, char *argv[]) {

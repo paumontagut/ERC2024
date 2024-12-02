@@ -19,7 +19,7 @@ Estar en ~/ERC2024/test_ws
 **bringup**
 
 - Contiene todos los nodos necesarios para el funcionamiento del robot.
-- `ros2 launch bringup robot_brinup.launch.py`
+- `ros2 launch bringup robot_bringup.launch.py`
 
 **camera_management**
 

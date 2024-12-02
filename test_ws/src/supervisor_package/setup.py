@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'camera_management'
+package_name = 'supervisor_package'
 
 setup(
     name=package_name,
@@ -10,9 +10,6 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/logitech_cameras.launch.py']),
-        ('share/' + package_name + '/launch', ['launch/logitech_test1.launch.py']),
-        ('share/' + package_name + '/launch', ['launch/logitech_test2.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,8 +17,10 @@ setup(
     maintainer_email='al426641@uji.es',
     description='TODO: Package description',
     license='TODO: License declaration',
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'supervisor_node = supervisor_package.supervisor_node:main',
         ],
     },
 )

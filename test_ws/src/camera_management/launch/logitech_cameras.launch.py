@@ -43,7 +43,7 @@ def generate_launch_description():
         executable='v4l2_camera_node',
         name='camara_logitech_1',    # Nombre del nodo
         parameters=[{'video_device': path_camara1}],
-        remappings=[('/image_raw', '/camara_logitech_1/image_raw')]
+        remappings=[('/image_raw/compressed', '/camara_logitech_1/image_raw/compressed')]
     ) 
 
     # Cámara 2
@@ -52,7 +52,7 @@ def generate_launch_description():
         executable='v4l2_camera_node',
         name='camara_logitech_2',
         parameters=[{'video_device': path_camara2}],
-        remappings=[('/image_raw', '/camara_logitech_2/image_raw')]
+        remappings=[('/image_raw/compressed', '/camara_logitech_2/image_raw/compressed')]
     )
     
     # ================= LANZAR NODOS =================

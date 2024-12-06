@@ -6,51 +6,22 @@ import subprocess
 import os
 import signal
 from threading import Lock, Thread
+from supervisor_package.config.topics_programas import topics_programas
 
 class SupervisorNode(Node):
     def __init__(self):
         super().__init__('supervisor_node')
-
         self.get_logger().info('Supervisor node started. Listening for program management and command execution topics.')
-
-        # Launchable programs: both `ros2 launch` and `ros2 run`
-        # Format: 
-        #   - 'command': either 'launch' or 'run'
-        #   - 'package': the ROS 2 package
-        #   - 'executable_or_file': the executable (for `run`) or the launch file name (for `launch`)
-        #   - 'arguments': a dictionary of optional arguments to pass to the program
-        self.programs = {
-            '/gui/camera_management': {
-                'command': 'launch',
-                'package': 'camera_management',
-                'executable_or_file': 'logitech_cameras.launch.py',
-                'arguments': {
-                    'enable_camara1': 'true',
-                    'enable_camara2': 'true',
-                    'path_camara1': '/dev/video0',
-                    'path_camara2': '/dev/video2'
-                },
-                'process': None
-            },
-            # '/program/turtlesim_node': {
-            #     'command': 'run',
-            #     'package': 'turtlesim',
-            #     'executable_or_file': 'turtlesim_node',
-            #     'arguments': {
-            #         'background_r': '255',
-            #         'background_g': '255',
-            #         'background_b': '255'
-            #     },
-            #     'process': None
-            # },
-            # Add more programs here as needed
-        }
+        
+        self.topics_programas = topics_programas
+        for program in self.topics_programas.values():
+            program.setdefault('process', None)
 
         # Lock for thread safety
         self.process_lock = Lock()
 
         # Create subscriptions for each program
-        for topic in self.programs.keys():
+        for topic in self.topics_programas.keys():
             self.create_subscription(
                 Bool,
                 topic,
@@ -85,8 +56,9 @@ class SupervisorNode(Node):
     def program_callback(self, msg, topic_name):
         """Función que se ejecuta cada vez que se recibe cualquier topic de los iniciados. Y se iniciará o cerrará el programa correspondiente"""
         with self.process_lock:
-            program = self.programs[topic_name]
+            program = self.topics_programas[topic_name]
             self.get_logger().info(f'Received {msg.data} for {topic_name}')
+            
             if msg.data:  # True -> Start the program
                 if program['process'] is None:
                     self.get_logger().info(f'Starting program: {topic_name}')
@@ -105,9 +77,9 @@ class SupervisorNode(Node):
         try:
             # Message format: topic_name,arg_key,arg_value
             topic_name, arg_key, arg_value = msg.data.split(',')
-            if topic_name in self.programs:
+            if topic_name in self.topics_programas:
                 with self.process_lock:
-                    program = self.programs[topic_name]
+                    program = self.topics_programas[topic_name]
                     if arg_key in program['arguments']:
                         self.get_logger().info(f'Updating argument {arg_key} for {topic_name} to {arg_value}')
                         program['arguments'][arg_key] = arg_value
@@ -124,7 +96,9 @@ class SupervisorNode(Node):
 
     def start_program(self, topic_name):
         """Start a program (launch or run) based on its configuration."""
-        program = self.programs[topic_name]
+        program = self.topics_programas[topic_name]
+        program.setdefault('process', None)
+        
         cmd = ['ros2', program['command'], program['package'], program['executable_or_file']]
 
         # Add arguments
@@ -146,7 +120,7 @@ class SupervisorNode(Node):
 
     def stop_program(self, topic_name):
         """Stop the currently running process for the program."""
-        program = self.programs[topic_name]
+        program = self.topics_programas[topic_name]
         process = program['process']
 
         if process:
@@ -211,8 +185,8 @@ class SupervisorNode(Node):
         """Ensure all processes are stopped before shutting down."""
         self.get_logger().info('Shutting down supervisor node...')
         with self.process_lock:
-            for topic_name in self.programs.keys():
-                if self.programs[topic_name]['process']:
+            for topic_name in self.topics_programas.keys():
+                if self.topics_programas[topic_name]['process']:
                     self.stop_program(topic_name)
         super().destroy_node()
 

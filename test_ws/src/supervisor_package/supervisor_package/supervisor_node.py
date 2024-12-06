@@ -32,17 +32,17 @@ class SupervisorNode(Node):
                 },
                 'process': None
             },
-            '/program/turtlesim_node': {
-                'command': 'run',
-                'package': 'turtlesim',
-                'executable_or_file': 'turtlesim_node',
-                'arguments': {
-                    'background_r': '255',
-                    'background_g': '255',
-                    'background_b': '255'
-                },
-                'process': None
-            },
+            # '/program/turtlesim_node': {
+            #     'command': 'run',
+            #     'package': 'turtlesim',
+            #     'executable_or_file': 'turtlesim_node',
+            #     'arguments': {
+            #         'background_r': '255',
+            #         'background_g': '255',
+            #         'background_b': '255'
+            #     },
+            #     'process': None
+            # },
             # Add more programs here as needed
         }
 

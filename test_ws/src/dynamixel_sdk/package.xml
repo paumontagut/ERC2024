@@ -16,6 +16,9 @@
   <author email="zerom@robotis.com">Zerom</author>
   <author>Leon</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>custom_interfaces</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'supervisor_node = supervisor_package.supervisor_node:main',
+            'supervisor_node_persistent_terminal = supervisor_package.supervisor_node_persistent_terminal:main',
         ],
     },
 )

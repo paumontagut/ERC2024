@@ -70,7 +70,7 @@ class SupervisorNode(Node):
         # Subscription for executing arbitrary terminal commands
         self.create_subscription(
             String,
-            '/gui/terminal_command',
+            '/gui/terminal_input',
             self.execute_command_callback,
             10
         )

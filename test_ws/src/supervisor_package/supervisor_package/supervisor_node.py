@@ -5,13 +5,13 @@ from std_msgs.msg import String
 import subprocess
 import os
 import signal
-from threading import Lock
+from threading import Lock, Thread
 
 class SupervisorNode(Node):
     def __init__(self):
         super().__init__('supervisor_node')
 
-        self.get_logger().info('Supervisor node started. Listening for program management topics.')
+        self.get_logger().info('Supervisor node started. Listening for program management and command execution topics.')
 
         # Launchable programs: both `ros2 launch` and `ros2 run`
         # Format: 
@@ -42,8 +42,8 @@ class SupervisorNode(Node):
                     'background_b': '255'
                 },
                 'process': None
-    },
-
+            },
+            # Add more programs here as needed
         }
 
         # Lock for thread safety
@@ -58,11 +58,27 @@ class SupervisorNode(Node):
                 10
             )
 
-        # Add a topic for updating arguments dynamically
+        # Subscription for updating arguments dynamically
         self.create_subscription(
             String,
             '/program/update_arguments',
             self.update_arguments_callback,
+            10
+        )
+
+        # ======== Remote Command Execution ========
+        # Subscription for executing arbitrary terminal commands
+        self.create_subscription(
+            String,
+            '/gui/terminal_command',
+            self.execute_command_callback,
+            10
+        )
+
+        # Publisher for command execution results
+        self.command_output_publisher = self.create_publisher(
+            String,
+            '/gui/terminal_output',
             10
         )
 
@@ -148,6 +164,49 @@ class SupervisorNode(Node):
                 self.get_logger().error(f'Error stopping process for {topic_name}: {e}')
             program['process'] = None
 
+    # ======== Remote Command Execution Methods ========
+
+    def execute_command_callback(self, msg):
+        """Callback to execute a terminal command received via the topic."""
+        command = msg.data.strip()
+        if not command:
+            self.get_logger().error('Received empty command. Ignoring.')
+            return
+
+        self.get_logger().info(f'Executing remote command: {command}')
+        # Execute the command in a separate thread to avoid blocking
+        Thread(target=self.run_command, args=(command,)).start()
+
+    def run_command(self, command):
+        """Run the given terminal command and publish its output or error."""
+        try:
+            # Execute the command
+            result = subprocess.run(
+                command,
+                shell=True,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+
+            # Prepare the result message
+            output_message = String()
+            if result.returncode == 0:
+                output_message.data = f'[SUCCESS]: {result.stdout.strip()}'
+                self.get_logger().info(f'Command output: {result.stdout.strip()}')
+            else:
+                output_message.data = f'[ERROR]: {result.stderr.strip()}'
+                self.get_logger().error(f'Command error: {result.stderr.strip()}')
+
+            # Publish the result
+            self.command_output_publisher.publish(output_message)
+
+        except Exception as e:
+            self.get_logger().error(f'Error executing command: {e}')
+            error_message = String()
+            error_message.data = f'[EXCEPTION]: {str(e)}'
+            self.command_output_publisher.publish(error_message)
+
     def destroy_node(self):
         """Ensure all processes are stopped before shutting down."""
         self.get_logger().info('Shutting down supervisor node...')
@@ -156,7 +215,6 @@ class SupervisorNode(Node):
                 if self.programs[topic_name]['process']:
                     self.stop_program(topic_name)
         super().destroy_node()
-
 
 def main(args=None):
     rclpy.init(args=args)

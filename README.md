@@ -6,6 +6,8 @@ Ver también: [Normas de Código](./normas_código.md)
 
 Estar en ~/ERC2024/test_ws
 
+En principio con hacer `colcon build` debería ser suficiente, ya se ha arreglado el problema del orden de compilación, pero si diera error, el orden es el siguiente:
+
 ```rosdep install --from-paths src --ignore-src -r -y && \ 
  colcon build --packages-select custom_interfaces && \ 
  colcon build --packages-select dynamixel_sdk && \ 

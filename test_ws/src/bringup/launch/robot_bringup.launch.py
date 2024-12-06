@@ -1,5 +1,9 @@
 #! /usr/bin/python3
 
+"""
+Este launch esencialmente lanza absolutamente todo, pero a veces igual es excesivo.
+"""
+
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription

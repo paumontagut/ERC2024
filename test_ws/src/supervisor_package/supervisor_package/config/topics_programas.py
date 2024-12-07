@@ -13,6 +13,8 @@ topics_programas = {
 
 # ======= SENSORES =======
 
+# LOGITECH CAMERAS
+
 '/gui/logitech_cameras': {
     'command': 'launch',
     'package': 'camera_management',
@@ -25,6 +27,32 @@ topics_programas = {
     },
 },
 
+'/gui/logitech_cameras/camera1': {
+    'command': 'launch',
+    'package': 'camera_management',
+    'executable_or_file': 'logitech_cameras.launch.py',
+    'arguments': {
+        'enable_camara1': 'true',
+        'enable_camara2': 'false',
+        'path_camara1': '/dev/video0',
+        'path_camara2': ''
+    },
+},
+
+'/gui/logitech_cameras/camera2': {
+    'command': 'launch',
+    'package': 'camera_management',
+    'executable_or_file': 'logitech_cameras.launch.py',
+    'arguments': {
+        'enable_camara1': 'false',
+        'enable_camara2': 'true',
+        'path_camara1': '',
+        'path_camara2': '/dev/video2'
+    },
+},
+ 
+
+# REALSENSE
 '/gui/realsense_camera': {
     'command': 'launch',
     'package': 'realsense2_camera',

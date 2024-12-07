@@ -27,7 +27,7 @@ topics_programas = {
     },
 },
 
-'/gui/logitech_cameras/camera1': {
+'/gui/logitech_camera1': {
     'command': 'launch',
     'package': 'camera_management',
     'executable_or_file': 'logitech_cameras.launch.py',
@@ -39,7 +39,7 @@ topics_programas = {
     },
 },
 
-'/gui/logitech_cameras/camera2': {
+'/gui/logitech_camera2': {
     'command': 'launch',
     'package': 'camera_management',
     'executable_or_file': 'logitech_cameras.launch.py',

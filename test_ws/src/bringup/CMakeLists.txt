@@ -24,7 +24,13 @@ find_package(custom_interfaces REQUIRED)
 include_directories(include)
 
 add_executable(motor_controller src/motor_controller.cpp)
+add_executable(motor_vel_controller src/motor_vel_controller.cpp)
 ament_target_dependencies(motor_controller 
+  rclcpp
+  dynamixel_sdk
+  custom_interfaces
+)
+ament_target_dependencies(motor_vel_controller 
   rclcpp
   dynamixel_sdk
   custom_interfaces
@@ -32,6 +38,7 @@ ament_target_dependencies(motor_controller
 
 install(TARGETS
   motor_controller
+  motor_vel_controller
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -1,6 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                     *** DYNAMIXEL MOTOR ROS2 NODE ***
 //
+//
 //                         * Enable USB port access *
 // >> sudo usermod -aG dialout <linux_account>
 //                           (Restart your computer)
@@ -8,10 +9,17 @@
 //                               * Start node *
 // >> ros2 run bringup motor_controller
 //
+//
+//             * Send SetVelocity messages to /set_velocity topic *
+// 1 unit = 0.229 rpm
+// >> ros2 topic pub -1 /set_velocity custom_interfaces/msg/SetVelocity "{id: 1, velocity: 500}"
+//
+//
 // if it doesnt work, try:
 // >> ros2 run bringup motor_controller <device_name>
 //         - Optional argument (default: /dev/ttyUSB0)
 //         - Use ls /dev/ttyUSB* to find the correct device name
+
 //         - Use sudo chmod 777 /dev/ttyUSB0 to give permissions
 //
 //             * Send Twist messages to /cmd_vel topic *
@@ -48,13 +56,19 @@
 #define PROTOCOL_VERSION 2.0
 
 // Default settings
-#define BAUDRATE 115200 // 57600 Default baudrate
+#define BAUDRATE 1000000 // TODO: Es esto verdad?
 #define DEFAULT_DEVICE_NAME "/dev/ttyUSB0" // ls /dev/ttyUSB* to find the correct device name
 
 // Robot parameters
-#define VELOCITY_UNIT 0.229 // rpm | See https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/#velocity-limit for more details
-#define WHEEL_DIAMETER 0.068 // meters
-#define WHEEL_SEPARATION 0.172 // meters
+#define VELOCITY_UNIT 0.229 // TODO: Poner bien -> rpm | See https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/#velocity-limit for more details
+#define WHEEL_DIAMETER 0.204 // TODO: Preguntar bien (metros)
+#define WHEEL_SEPARATION 0.344 // TODO: Poner bien (metros)
+
+// TODO: Motor IDs
+#define RIGHT_FRONT_ID 1
+#define RIGHT_REAR_ID 2
+#define LEFT_FRONT_ID 3
+#define LEFT_REAR_ID 4
 
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
@@ -65,8 +79,8 @@ constexpr double pi = 3.141592653589793;
 // Variables for motor control
 uint8_t id_herramienta = 3;
 uint32_t goal_position = 0;
-int32_t right_wheel_velocity = 0;
-int32_t left_wheel_velocity = 0;
+int32_t right_wheels_velocity = 0;
+int32_t left_wheels_velocity = 0;
 
 // Unit that allows the program to convert desired robot velocity to motor velocity units
 const double distance_unit = 1 / (pi * VELOCITY_UNIT * WHEEL_DIAMETER / 60);
@@ -105,93 +119,54 @@ MotorController::MotorController()
 
          // Calculate right and left wheel velocities
          if (angular_velocity == 0) {
-            right_wheel_velocity = linear_velocity * distance_unit;
-            left_wheel_velocity = linear_velocity * distance_unit;
+            right_wheels_velocity = linear_velocity * distance_unit;
+            left_wheels_velocity = linear_velocity * distance_unit;
          } else {
-            /*if (angular_velocity > 0) {
-               right_wheel_velocity = (angular_velocity * (linear_velocity + WHEEL_SEPARATION / 2)) * distance_unit;
-               left_wheel_velocity = (angular_velocity * (linear_velocity - WHEEL_SEPARATION / 2)) * distance_unit;
-            } else {
-               right_wheel_velocity = (-angular_velocity * (linear_velocity - WHEEL_SEPARATION / 2)) * distance_unit;
-               left_wheel_velocity = (-angular_velocity * (linear_velocity + WHEEL_SEPARATION / 2)) * distance_unit;
-            }*/
-        if (angular_velocity > 0) {
-            right_wheel_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
-               left_wheel_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
-            } else {
-               right_wheel_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
-               left_wheel_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
-         }
+            right_wheels_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
+            left_wheels_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
          }
 
-         // Send goal velocity (4 bytes) to each one of the DYNAMIXELs
-         dxl_comm_result =
-         packetHandler->write4ByteTxRx(
+        // RIGHT WHEEELS
+        int right_ids[2] = {RIGHT_FRONT_ID, RIGHT_REAR_ID};
+        for(auto id : right_ids){
+            dxl_comm_result =
+            packetHandler->write4ByteTxRx(
             portHandler, 
-            1, // Right wheel ID
+            id, // Right wheel ID
             ADDR_GOAL_VELOCITY, 
-            right_wheel_velocity, 
+            right_wheels_velocity, 
             &dxl_error
-         );
+            );
 
-         if (dxl_comm_result != COMM_SUCCESS) {
+            if (dxl_comm_result != COMM_SUCCESS) {
             RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-         } else if (dxl_error != 0) {
+            } else if (dxl_error != 0) {
             RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-         } else {
-            RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", 1, right_wheel_velocity);
-         }
+            } else {
+            RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", id, right_wheels_velocity);
+            }
+        }
 
-         dxl_comm_result =
-         packetHandler->write4ByteTxRx(
+        // LEFT WHEELS
+        int left_ids[2] = {LEFT_FRONT_ID, LEFT_REAR_ID};
+        for(auto id : left_ids){
+            dxl_comm_result =
+            packetHandler->write4ByteTxRx(
             portHandler, 
-            2, // Left wheel ID
+            id, // Left wheel ID
             ADDR_GOAL_VELOCITY, 
-            left_wheel_velocity, 
+            left_wheels_velocity, 
             &dxl_error
-         );
+            );
 
-         if (dxl_comm_result != COMM_SUCCESS) {
+            if (dxl_comm_result != COMM_SUCCESS) {
             RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-         } else if (dxl_error != 0) {
+            } else if (dxl_error != 0) {
             RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-         } else {
-            RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", 2, left_wheel_velocity);
-         }
-      }
-   );
-
-   // ╔═════════════════════════════╗
-   // ║  TOOL_POS TO MOTOR_MOVEMENT ║
-   // ╚═════════════════════════════╝
-
-   tool_pos_subscriber_ =
-      this->create_subscription<SetPosition>(
-      "tool_pos",
-      QOS_RKL10V,
-      [this](const SetPosition::SharedPtr msg) -> void {
-         uint8_t dxl_error = 0;
-
-         uint32_t goal_degrees = (unsigned int) msg->position;   // Convert int32 -> uint32
-         uint32_t goal_units = goal_degrees * 11.375;    // Convert normal degrees provided by the user to Dynamixel units
-
-         // Write goal_units (4 bytes) to the DYNAMIXEL
-         dxl_comm_result =
-         packetHandler->write4ByteTxRx(
-            portHandler, 
-            id_herramienta, // Tool ID set at the beginning of the program
-            ADDR_GOAL_POSITION,
-            goal_units,     // Goal position
-            &dxl_error
-         );
-
-         if (dxl_comm_result != COMM_SUCCESS) {
-            RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-         } else if (dxl_error != 0) {
-            RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-         } else {
-            RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Position: %d]", id_herramienta, goal_units);
-         }
+            } else {
+            RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", id, left_wheels_velocity);
+            }
+        }
       }
    );
 
@@ -271,19 +246,10 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode.");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode for ID %d.", dxl_id);
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set Velocity Control mode.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set Velocity Control mode for ID %d.", dxl_id);
    }
-
-   // ------ THEN ONLY SET POSITION MODE TO THE TOOL MOTOR
-   dxl_comm_result = packetHandler->write1ByteTxRx(
-      portHandler, 
-      id_herramienta,
-      ADDR_OPERATING_MODE, 
-      3,
-      &dxl_error
-   );
 
    // -------- Enable Torque so the motor can move (EEPROM will be locked)
    // IMPORTANT: Torque must be disabled to change the operating mode
@@ -296,9 +262,9 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque.");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque for ID %d.", dxl_id);
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to enable Torque.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to enable Torque for ID %d.", dxl_id);
    }
 }
 
@@ -334,7 +300,10 @@ int main(int argc, char * argv[]) {
    
    // Initialize Motors with the correct operating mode for each one,
    // and enable Torque for all of them
-   setupDynamixel(BROADCAST_ID);
+   uint8_t wheel_ids[4] = {LEFT_FRONT_ID, LEFT_REAR_ID, RIGHT_FRONT_ID, RIGHT_REAR_ID};
+   for(auto id : wheel_ids){
+       setupDynamixel(id);
+   }
    
    // Keep the node running until closed
    rclcpp::init(argc, argv);
@@ -343,13 +312,17 @@ int main(int argc, char * argv[]) {
    
    // On shutdown, disable Torque of DYNAMIXEL
    rclcpp::shutdown();
-   packetHandler->write1ByteTxRx(
-      portHandler,
-      BROADCAST_ID,
-      ADDR_TORQUE_ENABLE,
-      0,
-      &dxl_error
-   );
-   
+
+   // Disable Torque of all wheels
+    for(auto id : wheel_ids){
+        packetHandler->write1ByteTxRx(
+            portHandler,
+            id,
+            ADDR_TORQUE_ENABLE,
+            0,
+            &dxl_error
+        );
+    }
+
    return 0;
 }

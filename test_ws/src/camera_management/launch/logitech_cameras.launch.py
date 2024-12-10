@@ -34,6 +34,14 @@ def generate_launch_description():
         default_value='/dev/video2'
     )
 
+    # Camera 3 path
+    path_camara3 = LaunchConfiguration('path_camara3')
+    path_camara3_arg = DeclareLaunchArgument(
+        'path_camara3',
+        description="Device file for the third camera",
+        default_value='/dev/video4'
+    )
+
     # Enable Camera 1
     enable_camara1 = LaunchConfiguration('enable_camara1')
     enable_camara1_arg = DeclareLaunchArgument(
@@ -47,6 +55,14 @@ def generate_launch_description():
     enable_camara2_arg = DeclareLaunchArgument(
         'enable_camara2',
         description="Enable the second camera (true/false)",
+        default_value='true'
+    )
+
+    # Enable Camera 3
+    enable_camara3 = LaunchConfiguration('enable_camara3')
+    enable_camara3_arg = DeclareLaunchArgument(
+        'enable_camara3',
+        description="Enable the third camera (true/false)",
         default_value='true'
     )
 
@@ -69,6 +85,13 @@ def generate_launch_description():
         parameters=[{'video_device': path_camara2}],
         remappings=[('/image_raw/compressed', '/camara_logitech_2/image_raw/compressed')],
         condition=IfCondition(enable_camara2)  # Launch condition based on enable_camara2
+    )
+
+    # Camera 3 Node
+    camara3_nodo = Node(
+        package='realsense2_camera',
+        executable='realsense2_camera_node',
+        name='camara_realsense',
     )
 
     # ================= LANZAR NODOS =================

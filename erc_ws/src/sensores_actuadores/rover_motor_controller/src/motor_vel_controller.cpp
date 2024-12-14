@@ -7,7 +7,7 @@
 //                           (Restart your computer)
 //
 //                               * Start node *
-// >> ros2 run rover_bringup motor_controller
+// >> ros2 run rover_bringup motor_vel_controller
 //
 //
 //             * Send SetVelocity messages to /set_velocity topic *
@@ -16,7 +16,7 @@
 //
 //
 // if it doesnt work, try:
-// >> ros2 run rover_bringup motor_controller <device_name>
+// >> ros2 run rover_bringup motor_vel_controller <device_name>
 //         - Optional argument (default: /dev/ttyUSB0)
 //         - Use ls /dev/ttyUSB* to find the correct device name
 
@@ -91,7 +91,7 @@ uint8_t dxl_error = 0;
 
 
 MotorController::MotorController()
-: Node("motor_controller") {
+: Node("motor_vel_controller") {
 
    RCLCPP_INFO(this->get_logger(), "Motor Controller node started");
    
@@ -246,9 +246,9 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode for ID %d.", dxl_id);
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to set Velocity Control mode for ID %d.", dxl_id);
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set Velocity Control mode for ID %d.", dxl_id);
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to set Velocity Control mode for ID %d.", dxl_id);
    }
 
    // -------- Enable Torque so the motor can move (EEPROM will be locked)
@@ -262,9 +262,9 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque for ID %d.", dxl_id);
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to enable Torque for ID %d.", dxl_id);
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to enable Torque for ID %d.", dxl_id);
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to enable Torque for ID %d.", dxl_id);
    }
 }
 
@@ -283,19 +283,19 @@ int main(int argc, char * argv[]) {
    // Open Serial Port
    dxl_comm_result = portHandler->openPort();
    if (dxl_comm_result == false) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to open the port!");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to open the port!");
       return -1;
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to open the port.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to open the port.");
    }
    
    // Set the baudrate of the serial port (use DYNAMIXEL Baudrate)
    dxl_comm_result = portHandler->setBaudRate(BAUDRATE);
    if (dxl_comm_result == false) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set the baudrate!");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to set the baudrate!");
       return -1;
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set the baudrate.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to set the baudrate.");
    }
    
    // Initialize Motors with the correct operating mode for each one,

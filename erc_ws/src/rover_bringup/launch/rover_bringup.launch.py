@@ -12,9 +12,9 @@ from launch_ros.actions import Node
 # ================= MAIN =================
 def generate_launch_description():
     ld = LaunchDescription()
-    ld.add_action(camaras_logitech())
+    ld.add_action(ruedas())
+    #ld.add_action(camaras_logitech())
     # ld.add_action(camara_realsense())
-    # ld.add_action(ruedas())
     # ld.add_action(lidar_unitree())
     # ld.add_action(camara_siyi())
     # ld.add_action(semaforo())

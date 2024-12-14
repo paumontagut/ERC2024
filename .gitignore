@@ -1,5 +1,7 @@
-test_ws/build/
-test_ws/install/
-test_ws/log/
+**/build/
+**/install/
+**/log/
 .vscode/
 **/__pycache__/**
+
+utilidades/start_supervisor.log

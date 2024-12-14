@@ -5,10 +5,13 @@ LOG_FILE="/home/ujiroboticsteam/ERC2024/utilidades/start_supervisor.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "Starting Supervisor Script at $(date)"
 
+# Store the sudo password in a variable (use cautiously)
+SUDO_PASS="qwerty"
+
 # --- 1. Verificar y asegurar conexión a Internet ---
 # Activar NTP para sincronización de hora
-sudo timedatectl set-ntp false
-sudo timedatectl set-ntp true
+echo "$SUDO_PASS" | sudo -S timedatectl set-ntp false
+echo "$SUDO_PASS" | sudo -S timedatectl set-ntp true
 
 # Verificar si está conectado a Internet (probando con Google DNS)
 echo "Verificando conexión a Internet..."

@@ -61,7 +61,7 @@
 
 // Robot parameters
 #define VELOCITY_UNIT 0.229 // TODO: Poner bien -> rpm | See https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/#velocity-limit for more details
-#define WHEEL_DIAMETER 0.204 // TODO: Preguntar bien (metros)
+#define WHEEL_DIAMETER 0.23 // TODO: Preguntar bien (metros)
 #define WHEEL_SEPARATION 0.344 // TODO: Poner bien (metros)
 
 // TODO: Motor IDs

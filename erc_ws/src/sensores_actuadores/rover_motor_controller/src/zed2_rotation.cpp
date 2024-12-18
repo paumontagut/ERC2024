@@ -46,6 +46,8 @@ public:
 
         setupDynamixel(TOOL_HORIZONTAL_ID);
         setupDynamixel(TOOL_VERTICAL_ID);
+        // setupInitialPosition(TOOL_HORIZONTAL_ID);
+        // setupInitialPosition(TOOL_VERTICAL_ID);
 
         // ╔═════════════════════════════╗
         // ║  SUSCRIPCIÓN GRADOS ZED2    ║
@@ -55,14 +57,13 @@ public:
             "zed2_rotation_horizontal",
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) {
-                // ╔══════════════════════════════════════════════════════════════════════════════╗
-                // ║ Conversión: rango de -90° (izquierda) a 90° (derecha)                        ║
-                // ║ 0° -> Frente (centro) | -90° -> 0 unidades | 90° -> 2047 unidades           ║
-                // ║                                                                  [2047 u]   ║
-                // ║                               |---->  90° derecha    → Máx [2047 u]         ║
-                // ║                               |---->  0°  frente     → Medio [1024 u]       ║
-                // ║                               |----> -90° izquierda  → Mín [0 u]           ║
-                // ╚══════════════════════════════════════════════════════════════════════════════╝
+                // ╔═════════════════════════════════════════════════════════════════════════╗
+                // ║ Conversión: rango de -90° (izquierda) a 90° (derecha)                   ║
+                // ║ 0° -> Frente (centro) | -90° -> 0 unidades | 90° -> 2047 unidades       ║
+                // ║                               |---->  90° derecha    → Máx [2047 u]     ║
+                // ║                               |---->  0°  frente     → Medio [1024 u]   ║
+                // ║                               |----> -90° izquierda  → Mín [0 u]        ║
+                // ╚═════════════════════════════════════════════════════════════════════════╝
                 
                 int angle_degrees = msg->data;
 
@@ -81,18 +82,31 @@ public:
             }
         );
 
-
         vertical_position_subscriber_ = this->create_subscription<std_msgs::msg::Int32>(
-            // ID: 6
             "zed2_rotation_vertical",
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) {
+                // ╔════════════════════════════════════════════════════════════════════════════╗
+                // ║ Conversión: rango de -90° (abajo) a 90° (arriba)                           ║
+                // ║ 0° -> Frente (centro) | -90° -> 0 unidades | 90° -> 2047 unidades          ║
+                // ║                               |---->  90° arriba     → Máx [2047 u]        ║
+                // ║                               |---->  0°  frente     → Medio [1024 u]      ║
+                // ║                               |----> -90° abajo      → Mín [0 u]           ║
+                // ╚════════════════════════════════════════════════════════════════════════════╝
+                
                 int angle_degrees = msg->data;
-                if (angle_degrees < 0) angle_degrees = 0;
-                if (angle_degrees > 360) angle_degrees = 360;
-                int goal_position_units = (int)((float)angle_degrees * (4095.0f / 360.0f));
-                RCLCPP_INFO(this->get_logger(), "Recibidos %d grados (vertical), convertidos a %d unidades",
-                    angle_degrees, goal_position_units);
+
+                // Limitar la entrada entre -90 y 90 grados
+                if (angle_degrees < -90) angle_degrees = -90;
+                if (angle_degrees > 90) angle_degrees = 90;
+
+                // Convertir el rango [-90, 90] a [0, 2047]
+                int goal_position_units = (int)(((float)(angle_degrees + 90) / 180.0f) * 2047.0f);
+
+                RCLCPP_INFO(this->get_logger(),
+                            "Recibidos %d grados (vertical), csronvertidos a %d unidades",
+                            angle_degrees, goal_position_units);
+
                 handleSetPosition(goal_position_units, TOOL_VERTICAL_ID);
             }
         );
@@ -147,6 +161,21 @@ private:
             }
         }
     }
+
+    // void setupInitialPosition(uint8_t dxl_id) {
+    //     int dxl_comm_result;
+    //     uint8_t dxl_error = 0;
+    //     int initial_position = 1024;  // Centro (0° en tu código)
+
+    //     dxl_comm_result = packetHandler->write4ByteTxRx(
+    //         portHandler, dxl_id, ADDR_GOAL_POSITION, initial_position, &dxl_error);
+
+    //     if (dxl_comm_result != COMM_SUCCESS) {
+    //         RCLCPP_ERROR(this->get_logger(), "Failed to set initial position for ID %d", dxl_id);
+    //     } else {
+    //         RCLCPP_INFO(this->get_logger(), "Initial position (1024 units) set for ID %d", dxl_id);
+    //     }
+    // }
 
     void handleSetPosition(int goal_position_units, uint8_t dxl_id) {
         uint8_t dxl_error = 0;

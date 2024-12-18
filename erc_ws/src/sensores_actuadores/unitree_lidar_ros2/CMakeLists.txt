@@ -36,12 +36,14 @@ link_directories(
 
 add_definitions(${PCL_DEFINITIONS})
 
+find_library(UNITREE_LIDAR_LIB libunitree_lidar_sdk PATHS ../../drivers/unitree_lidar_sdk/lib/${CMAKE_SYSTEM_PROCESSOR})
+
 add_executable(unitree_lidar_ros2_node src/unitree_lidar_ros2_node.cpp)
 
-target_link_libraries( unitree_lidar_ros2_node
+target_link_libraries(unitree_lidar_ros2_node
   ${Boost_SYSTEM_LIBRARY}
   ${PCL_LIBRARIES}
-  libunitree_lidar_sdk.a
+  ${UNITREE_LIDAR_LIB}
 )
 
 ament_target_dependencies(
@@ -51,14 +53,22 @@ ament_target_dependencies(
   pcl_conversions
 )
 
+# Install the node executable
 install(TARGETS
-unitree_lidar_ros2_node
+  unitree_lidar_ros2_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
-# install rviz file and launch file
-install(FILES rviz/view.rviz ../../rover_bringup/launch/unitree_lidar.launch.py
+# Install rviz and launch files
+install(FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/rviz/view.rviz
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../rover_bringup/launch/unitree_lidar.launch.py
   DESTINATION share/${PROJECT_NAME}
+)
+
+# Install the static library if needed
+install(FILES ../../drivers/unitree_lidar_sdk/lib/${CMAKE_SYSTEM_PROCESSOR}/libunitree_lidar_sdk.a
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()

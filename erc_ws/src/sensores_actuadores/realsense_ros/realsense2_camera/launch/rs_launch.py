@@ -98,7 +98,29 @@ def generate_launch_description():
                 output='screen',
                 arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level')],
                 ),
-            ])
+            # Color Image Compression Node
+            launch_ros.actions.Node(
+                package='image_transport',
+                executable='republish',
+                name='color_compression',
+                arguments=['raw', 'compressed'],
+                remappings=[
+                    ('in', '/camera/camera/color/image_raw'),
+                    ('out', '/camera/camera/color/image_raw/compressed')
+                    ]
+                ),
+            # Depth Image Compression Node
+            launch_ros.actions.Node(
+                package='image_transport',
+                executable='republish',
+                name='depth_compression',
+                arguments=['raw', 'compressed'],
+                remappings=[
+                    ('in', '/camera/camera/depth/image_rect_raw'),
+                    ('out', '/camera/camera/depth/image_rect_raw/compressed')
+                ]
+            ),
+        ])
     else:
         return LaunchDescription(declare_configurable_parameters(configurable_parameters) + [
             # Realsense
@@ -126,5 +148,27 @@ def generate_launch_description():
                 output='screen',
                 arguments=['--ros-args', '--log-level', LaunchConfiguration('log_level')],
                 emulate_tty=True,
+                ), 
+                            # Color Image Compression Node
+            launch_ros.actions.Node(
+                package='image_transport',
+                executable='republish',
+                name='color_compression',
+                arguments=['raw', 'compressed'],
+                remappings=[
+                    ('in', '/camera/camera/color/image_raw'),
+                    ('out', '/camera/camera/color/image_raw/compressed')
+                    ]
                 ),
+            # Depth Image Compression Node
+            launch_ros.actions.Node(
+                package='image_transport',
+                executable='republish',
+                name='depth_compression',
+                arguments=['raw', 'compressed'],
+                remappings=[
+                    ('in', '/camera/camera/depth/image_rect_raw'),
+                    ('out', '/camera/camera/depth/image_rect_raw/compressed')
+                ]
+            ),  
         ])

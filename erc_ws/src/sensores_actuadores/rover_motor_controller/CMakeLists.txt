@@ -17,6 +17,8 @@ include_directories(include)
 
 add_executable(motor_controller src/motor_controller.cpp)
 add_executable(motor_vel_controller src/motor_vel_controller.cpp)
+add_executable(zed2_rotation src/zed2_rotation.cpp)
+
 ament_target_dependencies(motor_controller 
   rclcpp
   dynamixel_sdk
@@ -29,10 +31,18 @@ ament_target_dependencies(motor_vel_controller
   geometry_msgs
   std_msgs
 )
+ament_target_dependencies(zed2_rotation 
+  rclcpp
+  dynamixel_sdk
+  custom_interfaces
+  geometry_msgs
+  std_msgs
+)
 
 install(TARGETS
   motor_controller
   motor_vel_controller
+  zed2_rotation
   DESTINATION lib/${PROJECT_NAME}
 )
 

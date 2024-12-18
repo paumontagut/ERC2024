@@ -25,7 +25,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/time.hpp"
 
-#include "unitree_lidar_sdk_pcl.h"
+#include "../../../drivers/unitree_lidar_sdk/include/unitree_lidar_sdk_pcl.h"
 
 using std::placeholders::_1;
 

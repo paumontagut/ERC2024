@@ -26,12 +26,12 @@ find_package(PCL REQUIRED)
 include_directories(
   ${PCL_INCLUDE_DIRS} 
   include
-  ../unitree_lidar_sdk/include
+  ../../drivers/unitree_lidar_sdk/include
 )
 
 link_directories(
   ${PCL_LIBRARY_DIRS}
-  ../unitree_lidar_sdk/lib/${CMAKE_SYSTEM_PROCESSOR}
+  ../../drivers/unitree_lidar_sdk/lib/${CMAKE_SYSTEM_PROCESSOR}
 )
 
 add_definitions(${PCL_DEFINITIONS})
@@ -57,7 +57,7 @@ unitree_lidar_ros2_node
 )
 
 # install rviz file and launch file
-install(FILES rviz/view.rviz launch/launch.py
+install(FILES rviz/view.rviz ../../rover_bringup/launch/unitree_lidar.launch.py
   DESTINATION share/${PROJECT_NAME}
 )
 

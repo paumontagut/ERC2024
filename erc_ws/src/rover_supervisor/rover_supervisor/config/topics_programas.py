@@ -4,7 +4,7 @@ topics_programas = {
 # ======== BRINGUP GLOBAL ========
 # ================================
 # Activa todos los sensores y actuadores
-'/gui/rover_bringup': {
+'/gui/rover_bringup': {     # TODO: Revisar bien.
     'command': 'launch',
     'package': 'rover_bringup',
     'executable_or_file': 'rover_bringup.launch.py',

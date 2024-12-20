@@ -18,7 +18,6 @@ Si diera error, ejecutar lo siguiente:
 
 - Programa a ejecutar siempre, cuando se enciende el robot.
 - `ros2 run rover_supervisor supervisor_node`
-- Dentro también está el "supervisor_node_persistent_terminal", que es un testeo para poder clonar el funcionamiento de la terminal para los de unity.
 
 ## Rover Bringup
 
@@ -30,6 +29,26 @@ Si diera error, ejecutar lo siguiente:
   - `ros2 launch rover_bringup realsense_camera.launch.py`
   - `ros2 launch rover_bringup ruedas.launch.py`
   - `ros2 launch rover_bringup unitree_lidar.launch.py`
+
+Comandos:
+
+- `ros2 topic pub -1 {topic} std_msgs/Bool "data: true"`
+    - `/gui/ruedas`
+    - `/gui/logitech_cameras_1`
+    - `/gui/logitech_cameras_2`
+    - `/gui/realsense_camera`
+    - `/gui/unitree_lidar`
+    - `/gui/zed2_motors`
+    - `/gui/shutdown`
+    - El resto falta revisar/implementar: zed2_camera, all_cameras, siyi, lidar2d, all_motors, semaforo...
+- `ros2 topic echo /gui/terminal_output`
+- `ros2 topic pub -1 /program/update_arguments std_msgs/String "data: '{topic},{key},{argument}'"`
+    - topic: `/gui/ruedas`
+        - key: `device`, value: `/dev/ttyUSB0`
+        - key: `device`, value: `/dev/ttyUSB1`
+    - topic: `/gui/unitree_lidar`
+        - key: `serial_port`, value: `/dev/ttyUSB0`
+        - key: `serial_port`, value: `/dev/ttyUSB1`
 
 ## Sensores Actuadores
 

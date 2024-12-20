@@ -8,6 +8,8 @@ import signal
 from threading import Lock, Thread
 from rover_supervisor.config.topics_programas import topics_programas
 
+PASSWORD = "qwerty"  # TODO: Replace with actual password
+
 class SupervisorNode(Node):
     def __init__(self):
         super().__init__('supervisor_node')
@@ -134,6 +136,12 @@ class SupervisorNode(Node):
             self.log_and_publish(f'Unknown command type for {topic_name}: {program["command"]}', 'error')
             return
         
+        # Handle sudo commands
+        if "sudo" in cmd[0]:
+            cmd = f'echo {PASSWORD} | sudo -S {" ".join(cmd[1:])}'
+        else:
+            cmd = " ".join(cmd)  # Ensure cmd is properly formatted as a string
+
         # ======== ARGUMENTS?? =============
         if program['arguments']:
             for arg_key, arg_value in program['arguments'].items():
@@ -147,9 +155,11 @@ class SupervisorNode(Node):
             preexec_fn=os.setsid,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            text=True
+            text=True,
+            shell=True
         )
         program['process'] = process
+        self.log_and_publish(f'Process for {topic_name} trying to start with PID: {process.pid}')
 
         # ========== ERROR HANDLING / SET PROCESS TO STARTED ==========
         error_flag = {'detected': False}

@@ -72,8 +72,6 @@ class SupervisorNode(Node):
         output_message.data = message
         self.command_output_publisher.publish(output_message)
 
-
-
     def program_callback(self, msg, topic_name):
         """Función que se ejecuta cada vez que se recibe cualquier topic de los iniciados. Y se iniciará o cerrará el programa correspondiente"""
         with self.process_lock:
@@ -95,26 +93,29 @@ class SupervisorNode(Node):
                     self.log_and_publish(f'Program {topic_name} is not running.')
 
     def update_arguments_callback(self, msg):
-        """Update arguments for a program dynamically."""
+        """Update arguments for a program dynamically and restart it."""
         try:
             # Message format: topic_name,arg_key,arg_value
             topic_name, arg_key, arg_value = msg.data.split(',')
             if topic_name in self.topics_programas:
                 with self.process_lock:
                     program = self.topics_programas[topic_name]
-                    if arg_key in program['arguments']:
-                        self.log_and_publish(f'Updating argument {arg_key} for {topic_name} to {arg_value}')
-                        program['arguments'][arg_key] = arg_value
-                        if program['process'] is not None:
-                            self.log_and_publish(f'Restarting program {topic_name} with updated arguments...')
-                            self.stop_program(topic_name)
-                            self.start_program(topic_name)
-                    else:
-                        self.log_and_publish(f'Argument {arg_key} not found for {topic_name}', 'warn')
+                    program['arguments'][arg_key] = arg_value
+                    self.log_and_publish(f'Updated argument {arg_key} for {topic_name} to {arg_value}')
+
+                    # Stop program if running
+                    if program['process'] is not None:
+                        self.log_and_publish(f'Restarting program {topic_name} with updated arguments...')
+                        self.stop_program(topic_name)
+                        
+                    # Start program
+                    self.start_program(topic_name)
+                    
             else:
-                self.log_and_publish(f'Topic {topic_name} not found in programs.', 'warn')
+                self.log_and_publish(f'Topic {topic_name} not found in programs.', level='warn')
         except ValueError:
-            self.log_and_publish('Invalid format for update_arguments message. Expected "topic_name,arg_key,arg_value".', 'error')
+            self.log_and_publish('Invalid format for update_arguments message. Expected "topic_name,arg_key,arg_value".', level='error')
+
 
     def start_program(self, topic_name):
         """Start a program based on its configuration.
@@ -128,6 +129,7 @@ class SupervisorNode(Node):
         program = self.topics_programas[topic_name]
         program.setdefault('process', None)
         
+        #### Base command
         if program['command'] == 'exec':
             cmd = program['executable_or_file'].split()
         elif program['command'] in ['launch', 'run']:
@@ -136,19 +138,32 @@ class SupervisorNode(Node):
             self.log_and_publish(f'Unknown command type for {topic_name}: {program["command"]}', 'error')
             return
         
-        # Handle sudo commands
+        #### Arguments
+        
+        if program['arguments']:
+            
+            # Launches -> Use key-value pairs
+            if program['command'] == 'launch':
+                for arg_key, arg_value in program['arguments'].items():
+                    cmd.append(f'{arg_key}:={arg_value}')
+            
+            # Run -> Add only value
+            elif program['command'] in ['run', 'exec']:
+                for arg_value in program['arguments'].values():
+                    cmd.append(arg_value)
+
+                
+        ##### Handle sudo
+        
         if "sudo" in cmd[0]:
             cmd = f'echo {PASSWORD} | sudo -S {" ".join(cmd[1:])}'
         else:
-            cmd = " ".join(cmd)  # Ensure cmd is properly formatted as a string
+            cmd = " ".join(cmd)
 
-        # ======== ARGUMENTS?? =============
-        if program['arguments']:
-            for arg_key, arg_value in program['arguments'].items():
-                cmd.append(f'{arg_key}:={arg_value}')
 
         # ======== TRY TO START PROCESS ============
-        self.log_and_publish(f'Executing command: {" ".join(cmd)}')
+        
+        self.log_and_publish(f'Executing command: {cmd}')
 
         process = subprocess.Popen(
             cmd,
@@ -162,6 +177,7 @@ class SupervisorNode(Node):
         self.log_and_publish(f'Process for {topic_name} trying to start with PID: {process.pid}')
 
         # ========== ERROR HANDLING / SET PROCESS TO STARTED ==========
+        
         error_flag = {'detected': False}
         monitor_thread = Thread(target=self._capture_output, args=(process, topic_name, error_flag))
         monitor_thread.start()

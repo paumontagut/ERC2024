@@ -14,7 +14,7 @@ topics_programas = {
 '/gui/shutdown': {
     'command': 'exec',
     'package': None,
-    'executable_or_file': 'sudo halt -p',
+    'executable_or_file': 'sudo apt update',
     'arguments': {},
 },
 
@@ -27,14 +27,36 @@ topics_programas = {
 #     'arguments': {},
 # },
 
-'/gui/logitech_cameras': {
+# '/gui/logitech_cameras': {
+#     'command': 'launch',
+#     'package': 'rover_bringup',
+#     'executable_or_file': 'logitech_cameras.launch.py',
+#     'arguments': {
+#         'enable_camara1': 'true',
+#         'enable_camara2': 'true',
+#         'path_camara1': '/dev/video0',
+#         'path_camara2': '/dev/video2'
+#     },
+# },
+
+'/gui/logitech_cameras_1': {
     'command': 'launch',
     'package': 'rover_bringup',
     'executable_or_file': 'logitech_cameras.launch.py',
     'arguments': {
         'enable_camara1': 'true',
+        'enable_camara2': 'false',
+        'path_camara1': '/dev/video0'
+    },
+},
+
+'/gui/logitech_cameras_2': {
+    'command': 'launch',
+    'package': 'rover_bringup',
+    'executable_or_file': 'logitech_cameras.launch.py',
+    'arguments': {
+        'enable_camara1': 'false',
         'enable_camara2': 'true',
-        'path_camara1': '/dev/video0',
         'path_camara2': '/dev/video2'
     },
 },
@@ -54,15 +76,18 @@ topics_programas = {
 #     # Pendiente de implementar
 # },
 
+# '/gui/zed2_camera': {   # TODO: implementar
+# },
+
 
 # ========= LIDARS =========
 
 '/gui/unitree_lidar': {
     'command': 'launch',
     'package': 'unitree_lidar_ros2',
-    'executable_or_file': 'launch.py',
+    'executable_or_file': 'unitree_lidar.launch.py',
     'arguments': {
-        'serial_port': '/dev/ttyUSB0'
+        'serial_port': '/dev/ttyUSB1'
     },
 },
 
@@ -75,18 +100,20 @@ topics_programas = {
 
 # ========= MOTORS =========
 
-'/gui/all_motors': {
-    'command': 'launch',
-    'package': 'rover_bringup',
-    'executable_or_file': 'all_motors.launch.py',
-    'arguments': {},
-},
+# '/gui/all_motors': {
+#     'command': 'launch',
+#     'package': 'rover_bringup',
+#     'executable_or_file': 'all_motors.launch.py',
+#     'arguments': {},
+# },
 
 '/gui/ruedas': {
     'command': 'run',
     'package': 'rover_motor_controller',
     'executable_or_file': 'motor_vel_controller',
-    'arguments': {},
+    'arguments': {
+        'device': '/dev/ttyUSB0',
+    },
 },
 
 '/gui/zed2_motors': {

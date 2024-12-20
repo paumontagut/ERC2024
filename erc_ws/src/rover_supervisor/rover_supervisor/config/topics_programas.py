@@ -14,7 +14,7 @@ topics_programas = {
 '/gui/shutdown': {
     'command': 'exec',
     'package': None,
-    'executable_or_file': 'sudo apt update',
+    'executable_or_file': 'sudo halt -p',
     'arguments': {},
 },
 

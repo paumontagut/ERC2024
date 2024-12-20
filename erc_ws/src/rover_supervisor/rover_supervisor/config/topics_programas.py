@@ -11,7 +11,21 @@ topics_programas = {
     'arguments': {},
 },
 
-# ======= SENSORES =======
+'/gui/shutdown': {
+    'command': 'exec',
+    'package': None,
+    'executable_or_file': 'sudo halt -p',
+    'arguments': {},
+},
+
+# ========= CAMARAS =======
+
+'/gui/all_cameras': {      # TODO: Implementar
+    'command': 'launch',
+    'package': 'rover_bringup',
+    'executable_or_file': 'all_cameras.launch.py',
+    'arguments': {},
+},
 
 '/gui/logitech_cameras': {
     'command': 'launch',
@@ -36,6 +50,13 @@ topics_programas = {
     },
 },
 
+# '/gui/siyi_camera': {
+#     # Pendiente de implementar
+# },
+
+
+# ========= LIDARS =========
+
 '/gui/unitree_lidar': {
     'command': 'launch',
     'package': 'unitree_lidar_ros2',
@@ -45,22 +66,39 @@ topics_programas = {
     },
 },
 
-'/gui/siyi_camera': {
-    # Pendiente de implementar
-},
+# '/gui/lidar_2d': {
+#     'command': 'launch',
+#     'package': 'rover_bringup',
+#     'executable_or_file': 'lidar_2d.launch.py',
+#     'arguments': {},
+# },
 
+# ========= MOTORS =========
 
-# ======= ACTUADORES =======
-
-'/gui/ruedas': {
+'/gui/all_motors': {
     'command': 'launch',
     'package': 'rover_bringup',
-    'executable_or_file': 'motor_controller',
+    'executable_or_file': 'all_motors.launch.py',
     'arguments': {},
 },
 
-'/gui/semaforo': {
-    # Pendiente de implementar
+'/gui/ruedas': {
+    'command': 'run',
+    'package': 'rover_motor_controller',
+    'executable_or_file': 'motor_vel_controller',
+    'arguments': {},
 },
+
+'/gui/zed2_motors': {
+    'command': 'launch',
+    'package': 'rover_bringup',
+    'executable_or_file': 'zed2_motors.launch.py',
+    'arguments': {},
+},
+
+# ========= OTROS =========
+# '/gui/semaforo': {
+#     # Pendiente de implementar
+# },
 
 }

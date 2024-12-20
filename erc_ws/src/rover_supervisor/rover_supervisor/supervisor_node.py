@@ -55,16 +55,21 @@ class SupervisorNode(Node):
 
     def log_and_publish(self, message, level='info'):
         """Log a message and publish it to /gui/terminal_output."""
-        log_function = {
-            'info': self.get_logger().info,
-            'warn': self.get_logger().warning,
-            'error': self.get_logger().error,
-        }
-        log_function.get(level, self.get_logger().info)(message)
+        # Log message with the appropriate severity
+        if level == 'info':
+            self.get_logger().info(message)
+        elif level == 'warn':
+            self.get_logger().warning(message)
+        elif level == 'error':
+            self.get_logger().error(message)
+        else:
+            self.get_logger().info(message)  # Default to info
 
+        # Publish the same message to /gui/terminal_output
         output_message = String()
         output_message.data = message
         self.command_output_publisher.publish(output_message)
+
 
 
     def program_callback(self, msg, topic_name):
@@ -123,15 +128,18 @@ class SupervisorNode(Node):
         
         if program['command'] == 'exec':
             cmd = program['executable_or_file'].split()
-        elif program['command'] == 'launch' or program['command'] == 'run':
+        elif program['command'] in ['launch', 'run']:
             cmd = ['ros2', program['command'], program['package'], program['executable_or_file']]
-
+        else:
+            self.log_and_publish(f'Unknown command type for {topic_name}: {program["command"]}', 'error')
+            return
+        
         # ======== ARGUMENTS?? =============
         if program['arguments']:
             for arg_key, arg_value in program['arguments'].items():
                 cmd.append(f'{arg_key}:={arg_value}')
 
-        # ======== START PROCESS ============
+        # ======== TRY TO START PROCESS ============
         self.log_and_publish(f'Executing command: {" ".join(cmd)}')
 
         process = subprocess.Popen(
@@ -142,21 +150,36 @@ class SupervisorNode(Node):
             text=True
         )
         program['process'] = process
+
+        # ========== ERROR HANDLING / SET PROCESS TO STARTED ==========
+        error_flag = {'detected': False}
+        monitor_thread = Thread(target=self._capture_output, args=(process, topic_name, error_flag))
+        monitor_thread.start()
+        monitor_thread.join()  # Wait for the thread to finish
+
+        # Check if an error was detected
+        if error_flag['detected'] or process.returncode != 0:
+            self.log_and_publish(f"Failed to start program: {topic_name}. Process not marked as running.", level='error')
+            program['process'] = None
+        else:
+            self.log_and_publish(f"Program {topic_name} started successfully.")
     
-        # ========= OUTPUT ============
-        Thread(target=self._capture_output, args=(process, topic_name)).start()
-    
-    def _capture_output(self, process, topic_name):
-        """Capture and publish process output."""
+    def _capture_output(self, process, topic_name, error_flag):
+        """Capture and publish process output. Check for errors."""
         for line in process.stdout:
-            output_message = String()
-            output_message.data = f'[{topic_name}][STDOUT]: {line.strip()}'
-            self.command_output_publisher.publish(output_message)
+            self.log_and_publish(f'[{topic_name}][STDOUT]: {line.strip()}')
 
         for line in process.stderr:
-            output_message = String()
-            output_message.data = f'[{topic_name}][STDERR]: {line.strip()}'
-            self.command_output_publisher.publish(output_message)
+            self.log_and_publish(f'[{topic_name}][STDERR]: {line.strip()}', level='error')
+            # Detect error and set flag
+            if "error" in line.lower() or "failed" in line.lower():
+                error_flag['detected'] = True
+
+        # Wait for the process to finish and check its exit code
+        return_code = process.wait()
+        if return_code != 0:
+            self.log_and_publish(f'[{topic_name}] Process exited with return code {return_code}', level='error')
+            error_flag['detected'] = True
 
 
     def stop_program(self, topic_name):

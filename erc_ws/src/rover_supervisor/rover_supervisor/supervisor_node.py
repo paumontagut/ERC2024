@@ -247,11 +247,26 @@ class SupervisorNode(Node):
 
     def destroy_node(self):
         """Ensure all processes are stopped before shutting down."""
-        self.get_logger().info('Shutting down supervisor node...')
+        self.log_and_publish('Shutting down supervisor node...')
+
         with self.process_lock:
-            for topic_name in self.topics_programas.keys():
-                if self.topics_programas[topic_name]['process']:
-                    self.stop_program(topic_name)
+            for topic_name, program in self.topics_programas.items():
+                if program['process']:
+                    self.log_and_publish(f'Terminating process for {topic_name}...')
+                    try:
+                        os.killpg(os.getpgid(program['process'].pid), signal.SIGTERM)
+                        program['process'].wait(timeout=5)
+                        self.log_and_publish(f'Process for {topic_name} terminated.')
+                    except subprocess.TimeoutExpired:
+                        self.log_and_publish(f'Process for {topic_name} did not terminate in time. Killing...', level='warn')
+                        os.killpg(os.getpgid(program['process'].pid), signal.SIGKILL)
+                        self.log_and_publish(f'Process for {topic_name} killed.')
+                    except Exception as e:
+                        self.log_and_publish(f'Error stopping process for {topic_name}: {e}', level='error')
+
+                    # Ensure the process is cleared
+                    program['process'] = None
+
         super().destroy_node()
 
 def main(args=None):

@@ -20,12 +20,12 @@ topics_programas = {
 
 # ========= CAMARAS =======
 
-'/gui/all_cameras': {      # TODO: Implementar
-    'command': 'launch',
-    'package': 'rover_bringup',
-    'executable_or_file': 'all_cameras.launch.py',
-    'arguments': {},
-},
+# '/gui/all_cameras': {      # TODO: Implementar
+#     'command': 'launch',
+#     'package': 'rover_bringup',
+#     'executable_or_file': 'all_cameras.launch.py',
+#     'arguments': {},
+# },
 
 '/gui/logitech_cameras': {
     'command': 'launch',

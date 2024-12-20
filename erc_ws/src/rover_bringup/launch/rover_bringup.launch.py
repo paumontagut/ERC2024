@@ -15,8 +15,8 @@ def generate_launch_description():
     ld.add_action(ruedas())
     ld.add_action(logitech_cameras())
     ld.add_action(realsense_camera())
-    ld.add_action(unitree_lidar())
     ld.add_action(zed2_motors())
+    # ld.add_action(unitree_lidar())
     return ld
     
 # ================= FUNCIONES =================

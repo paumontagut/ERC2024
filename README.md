@@ -1,6 +1,7 @@
 # UJI ROBOTICS - ERC2024
 
-Ver también: [Normas de Código](./documentación/normas_código.md)
+Ver también:   
+[Memoria Server](https://docs.google.com/document/d/1E_Q-_umBtsWQF4Fvs7V24_zVx3GvIHj7npbNcFVh6iw/edit?usp=sharing)  
 
 ## Compilación
 

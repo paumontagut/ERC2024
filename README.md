@@ -1,74 +1,78 @@
-# UJI ROBOTICS - ERC2024
+# UJI ROBOTICS - ERC2025
 
-Ver también:   
-[Memoria Server](https://docs.google.com/document/d/1E_Q-_umBtsWQF4Fvs7V24_zVx3GvIHj7npbNcFVh6iw/edit?usp=sharing)  
+Hola! Este es el repositorio que contiene todo lo relacionado con el server del rover, todos los programas que se ejecutan en la [Jetson](https://drive.google.com/open?id=1fHbcS8U8frjhqGWFR6CukLB3bt-LdUYFgUYxeBtJ6mc&usp=drive_copy) y la conexión con los diferentes sensores y actuadores.
 
-## Compilación
+Este documento contiene un resumen de todos los pasos a seguir para poder hacer funcionar al rover desde 0, además de una explicación de qué hace cada parte del código. Para profundizar más en cualquier aspecto, podrás encontrar todos las memorias con los procesos en el siguiente documento: [Memoria Server](https://docs.google.com/document/d/1E_Q-_umBtsWQF4Fvs7V24_zVx3GvIHj7npbNcFVh6iw/edit?usp=sharing). También se tratará de enlazar en cada sección con la respectiva parte de la memoria.
 
-`cd ~/ERC2024/erc_ws`
-`colcon build`
-`source install/setup.bash`
+## Índice
 
-Debería ser suficiente con lo anterior.
-Detecta automáticamente las dependencias y el orden para hacerlo.
-Si diera error, ejecutar lo siguiente:
+- [UJI ROBOTICS - ERC2025](#uji-robotics---erc2025)
+    - [Índice](#índice)
+    - [Pre-Conocimentos, Conexión a la misma red](#pre-conocimentos-conexión-a-la-misma-red)
+    - [Ejecución básica - Mandar comandos](#ejecución-básica---mandar-comandos)
+        - [GUI Principal](#gui-principal)
+        - [Topics pre-definidos](#topics-pre-definidos)
+        - [Comandos personalizados](#comandos-personalizados)
+    - [Siguientes aspectos](#siguientes-aspectos)
 
-`rosdep install --from-paths src --ignore-src -r -y && colcon build --packages-select custom_interfaces && colcon build --packages-select dynamixel_sdk && source install/setup.bash && colcon build --symlink-install --packages-select rover_bringup && colcon build`
+## Pre-Conocimentos, Conexión a la misma red
 
-## Rover Supervisor
+Por ahora la mayor parte de las pruebas se han hecho en la propia Jetson, puesto que es la que tiene todos los paquetes y dependencias necesarias instaladas. 
 
-- Programa a ejecutar siempre, cuando se enciende el robot.
-- `ros2 run rover_supervisor supervisor_node`
+Tratar de compilar en un portátil propio puede conllevar a todo tipo de errores del que no nos haremos responsables por ahora, aunque la idea es organizar qué paquetes sí se pueden probar en un portátil y cuáles no.
 
-## Rover Bringup
+Para poder mandar comandos al rover, deberemos estar conectados a la misma red. Para ello...
 
-- Contiene todos los launches necesarios para el funcionamiento del robot. 
-- Tiene uno principal que lanza todos los demás:
-    - `ros2 launch rover_bringup rover_bringup.launch.py`
-- Y luego los sub-launches, que cada uno ejecuta un paquete de [Sensores Actuadores](#sensores-actuadores):
-  - `ros2 launch rover_bringup logitech_cameras.launch.py`
-  - `ros2 launch rover_bringup realsense_camera.launch.py`
-  - `ros2 launch rover_bringup ruedas.launch.py`
-  - `ros2 launch rover_bringup unitree_lidar.launch.py`
+- [ ] TODO: Antena, rosdomain, ips... Arreglar y automatizar.
 
-Comandos:
 
-- `ros2 topic pub -1 {topic} std_msgs/Bool "data: true"`
-    - `/gui/ruedas`
-    - `/gui/logitech_cameras_1`
-    - `/gui/logitech_cameras_2`
-    - `/gui/realsense_camera`
-    - `/gui/unitree_lidar`
-    - `/gui/zed2_motors`
-    - `/gui/shutdown`
-    - El resto falta revisar/implementar: zed2_camera, all_cameras, siyi, lidar2d, all_motors, semaforo...
-- `ros2 topic echo /gui/terminal_output`
-- `ros2 topic pub -1 /program/update_arguments std_msgs/String "data: '{topic},{key},{argument}'"`
-    - topic: `/gui/ruedas`
-        - key: `device`, value: `/dev/ttyUSB0`
-        - key: `device`, value: `/dev/ttyUSB1`
-    - topic: `/gui/unitree_lidar`
-        - key: `serial_port`, value: `/dev/ttyUSB0`
-        - key: `serial_port`, value: `/dev/ttyUSB1`
+## Ejecución básica - Mandar comandos
 
-## Sensores Actuadores
+- [ ] TODO: Explicar cómo conectar el rover a la batería.
 
-En esta carpeta se encuentran todos los paquetes necesarios, que son llamados desde el [Rover Bringup](#rover-bringup)
+Para mover el rover o ejecutar programas encenderemos el rover y automáticamente se abrirá el [Nodo Supervisor](#rover-supervisor) que se encargará de lanzar cualquier programa que le mandemos.
 
-## Drivers
+Una vez ya estemos conectados a la misma red que el rover y este esté encendido, ya podremos moverlo y ejecutar programas. Para ello tenemos varias opciones:
 
-En esta carpeta se encuentran todos los paquetes que no se ejecutan directamente, pero que hacen falta para que otros paquetes funcionen correctamente.
+### GUI Principal
+- Usar la GUI principal creada específicamente para el ERC2025. 
 
-## Programas
+- https://github.com/guillemfustier/ERC_GUI
+- Esta se encarga de automáticamente mandar todos los topics necesarios, visualizar las cámaras [...]
 
-Aquí se irán poniendo los diferentes paquetes de las pruebas.
-Por ahora solo está "movement", que aún hay que testearlo bien.
 
-## Argumentos
+### Topics pre-definidos
 
-- Podemos ver argumentos que reciben los sub-launches (por si queremos hacer pruebas) con por ejemplo:
-- `ros2 launch rover_bringup logitech_cameras.launch.py --show-args`
+- Acceder a topics predefinidos desde cualquier terminal
+    - Para ello se podrá mandar "true/false" en los diferentes topics ya creados para ejecutar o cancelar cualquier programa. El comando general es el siguiente:
+        - `ros2 topic pub -1 {topic} std_msgs/Bool "data: true"`
+        - `ros2 topic pub -1 {topic} std_msgs/Bool "data: false"`
+    - Donde los topics posibles son los siguientes:
+        - `/gui/bringup`
+            - ¿qué hace? mira [Rover Bringup](#rover-bringup)
+        - `/gui/shutdown`
+            - Apaga el rover.
+        - `/gui/ruedas`
+        - `/gui/all_cameras`
+        - ...
+        - `/gui/logitech_cameras`
+        - `/gui/logitech_cameras_1`
+        - `/gui/logitech_cameras_2`
+        - `/gui/realsense_camera`
+        - `/gui/unitree_lidar`
+        - `/gui/zed2_motors`
+        - [...] TODO: Revisar
 
-- Además, al launch principal también la idea sería poder pasarle estos mismos argumentos y que se pasara a su vez a los sub-launches, haciendolo personalizable al 100%:
-- Por ahora no se ha implementado esto, se vería con:
-- `ros2 launch rover_bringup rover_bringup.launch.py --show-args`
+### Comandos personalizados
+
+Aún está en fase de pruebas, pero la opción principal es mandar comandos individuales y que se ejecuten en la jetson.
+
+Para ello se ejecutará el comando `ros2 topic pub -1 /gui/terminal_input std_msgs/String "data: '{comando}'"`, donde `{comando}` es lo que queremos ejecutar.
+
+Para ver el output de los comandos, podremos hacerlo en otra terminal con `ros2 topic echo /gui/terminal_output`.
+
+- [ ] TODO: Revisar mejor.
+
+## Siguientes aspectos
+
+[Programación](documentaci%C3%B3n/aspectos-programacion.md)

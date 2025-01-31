@@ -8,29 +8,44 @@ Este documento contiene un resumen de todos los pasos a seguir para poder hacer 
 
 - [UJI ROBOTICS - ERC2025](#uji-robotics---erc2025)
     - [Índice](#índice)
-    - [Pre-Conocimentos, Conexión a la misma red](#pre-conocimentos-conexión-a-la-misma-red)
+    - [Requisitos](#requisitos)
     - [Ejecución básica - Mandar comandos](#ejecución-básica---mandar-comandos)
         - [GUI Principal](#gui-principal)
         - [Topics pre-definidos](#topics-pre-definidos)
         - [Comandos personalizados](#comandos-personalizados)
     - [Siguientes aspectos](#siguientes-aspectos)
 
-## Pre-Conocimentos, Conexión a la misma red
+## Requisitos
 
-Por ahora la mayor parte de las pruebas se han hecho en la propia Jetson, puesto que es la que tiene todos los paquetes y dependencias necesarias instaladas. 
+Por ahora la mayor parte de las pruebas se han hecho en la propia Jetson, puesto que es la que tiene todos los paquetes y dependencias necesarias instaladas. Tratar de compilar en un portátil propio puede conllevar a todo tipo de errores del que no nos haremos responsables por ahora, aunque la idea es organizar qué paquetes sí se pueden probar en un portátil y cuáles no.
 
-Tratar de compilar en un portátil propio puede conllevar a todo tipo de errores del que no nos haremos responsables por ahora, aunque la idea es organizar qué paquetes sí se pueden probar en un portátil y cuáles no.
+Para poder mandar comandos al rover, deberemos estar conectados a la misma red y también tener los sources bien configurados en ambos dispositivos. En la jetson se habrá hecho todo automáticamente, solo quedaría en el portátil del usuario.
 
-Para poder mandar comandos al rover, deberemos estar conectados a la misma red y también tener en ambos lo siguiente, que en principio se debería hacer solo al abrir la jetson, pero en el portátil de cada uno si que es importante:
+La conexión automática en la jetson se establecerá mediante `utilidades/net_connect.sh`.
 
-`unset ROS_DOMAIN_ID`
-`export ROS_LOCALHOST_ONLY=0`
+Los sources y el ROS_DOMAIN_ID se establecerán mediante `utilidades/rover_sources.sh`, que también se deberá ejecutar en cada terminal que abra el usuario en su portátil.
 
-- [ ] TODO: Antena, rosdomain, ips... Arreglar y automatizar.
-- [ ] Función personalizada (bashrc) que todo el mundo haga en su portatil, con sources, rosdomain, tuberias para comandos personalizados...
-- [ ] Mirar ssh
+- [ ] TODO: Hacer bien esto anterior, implementar antena, wifis posibles por prioridad...
+- [ ] Mejorar rover_sources.sh, con comandos personalizados y rápidos, tuberias, mejores explicaciones, que aparezca al abrir terminal...
+
+---
+
+En caso de que la jetson no se conecte automáticamente a un internet, dé problemas, o simplemente se quiera programar de forma más avanzada o conectar a ella, hay varias opciones:
+
+- Conectar la jetson a un monitor, teclado y raton, 
+    - El usuario es `ujiroboticsteam` y la contraseña es `qwerty`.
+
+- `ssh` básico
+    - [ ] Falta revisar
+
+- `sshx` avanzado colaborativo
+    - [ ] bot telegram organizar
+    - [ ] Explicar mejor
+    - Ver https://sshx.io/
+
 
 ## Ejecución básica - Mandar comandos
+
 
 Para mover el rover o ejecutar programas encenderemos el rover y automáticamente se abrirá el Nodo Supervisor que se encargará de lanzar cualquier programa que le mandemos.
 

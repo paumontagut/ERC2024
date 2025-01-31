@@ -85,6 +85,9 @@ int32_t left_wheels_velocity = 0;
 // Unit that allows the program to convert desired robot velocity to motor velocity units
 const double distance_unit = 1 / (pi * VELOCITY_UNIT * WHEEL_DIAMETER / 60);
 
+// Vmax_ruedas = 2047 value -->  Vmax_cmdvel = (pi * 2047 * WHEEL_DIAMETER / 60) = 5.65m/s
+// Vmax_cmd
+
 // Error handling
 int dxl_comm_result = COMM_TX_FAIL;
 uint8_t dxl_error = 0;
@@ -118,14 +121,26 @@ MotorController::MotorController()
          double angular_velocity = msg->angular.z;
 
          // Calculate right and left wheel velocities
-         if (angular_velocity == 0) {
+         if (angular_velocity > -0.5 && angular_velocity <0.5) {
             right_wheels_velocity = linear_velocity * distance_unit;
             left_wheels_velocity = linear_velocity * distance_unit;
-         } else {
+         } else if (angular_velocity >= 0.5) {
+            right_wheels_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
+            left_wheels_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
+         } else if (angular_velocity <= -0.5) {
             right_wheels_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
             left_wheels_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
          }
 
+
+         
+      """
+         else if{
+            right_wheels_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
+            left_wheels_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
+         }
+      """
+      
         // RIGHT WHEEELS
         int right_ids[2] = {RIGHT_FRONT_ID, RIGHT_REAR_ID};
         for(auto id : right_ids){

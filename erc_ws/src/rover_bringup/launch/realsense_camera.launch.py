@@ -1,0 +1,1 @@
+/home/diego/Documents/Github/Professional/ERC2024/erc_ws/src/sensores_actuadores/realsense_ros/realsense2_camera/launch/rs_launch.py

@@ -1,8 +1,0 @@
-prefix=/home/ubuntu/Escritorio/GitHub/ERC2024/test_ws/src/drone/install
-
-Name: simulacion
-Description: Description of simulacion
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

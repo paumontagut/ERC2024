@@ -131,15 +131,6 @@ MotorController::MotorController()
             right_wheels_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
             left_wheels_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
          }
-
-
-         
-      """
-         else if{
-            right_wheels_velocity = ((2*linear_velocity + WHEEL_SEPARATION*angular_velocity) / 2) * distance_unit;
-            left_wheels_velocity = ((2*linear_velocity - WHEEL_SEPARATION*angular_velocity) / 2) *  distance_unit;
-         }
-      """
       
         // RIGHT WHEEELS
         int right_ids[2] = {RIGHT_FRONT_ID, RIGHT_REAR_ID};

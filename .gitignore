@@ -5,3 +5,4 @@
 **/__pycache__/**
 
 utilidades/start_supervisor.log
+startup_scripts/startup_scripts.log

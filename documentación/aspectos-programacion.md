@@ -15,10 +15,6 @@ Si diera error, ejecutar lo siguiente:
 
 `rosdep install --from-paths src --ignore-src -r -y && colcon build --packages-select custom_interfaces && colcon build --packages-select dynamixel_sdk && source install/setup.bash && colcon build --symlink-install --packages-select rover_bringup && colcon build`
 
-### Rover Supervisor
-
-Este es el nodo principal que se ejecuta siempre que encendemos el rover (ver más en [Nodo Supervisor - Google Docs](https://drive.google.com/open?id=1HD8huN-Qh6SthnQPIevO-fIPyWkLCJyxNCTryFgf2E0&usp=drive_copy)).
-
 
 ### Rover Bringup
 

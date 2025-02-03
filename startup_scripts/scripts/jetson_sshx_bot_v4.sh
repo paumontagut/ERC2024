@@ -38,8 +38,8 @@ cleanup() {
     exit 0
 }
 
-# Trap CTRL + C (SIGINT) and call cleanup()
-trap cleanup SIGINT
+# CTRL + C (SIGINT) or termination signal -> and call cleanup()
+trap cleanup SIGINT SIGTERM
 
 # Start sshx in the background
 TEMP_OUTPUT=$(mktemp)

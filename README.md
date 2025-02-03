@@ -103,6 +103,8 @@ Entre los programas que se ejecutan están:
 - start_supervisor.sh
     - Este es el nodo principal que se ejecuta siempre que encendemos el rover (ver más en [Nodo Supervisor - Google Docs](https://drive.google.com/open?id=1HD8huN-Qh6SthnQPIevO-fIPyWkLCJyxNCTryFgf2E0&usp=drive_copy)).
 
+- devices_setup.sh
+
 Y algunos comandos para arreglar errores o debuggear son:
 
     sudo nano /etc/systemd/system/rover-startup.service

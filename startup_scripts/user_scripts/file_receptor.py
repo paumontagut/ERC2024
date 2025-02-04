@@ -2,7 +2,7 @@ import socket
 import os
 
 # Configuración del servidor
-HOST = "192.168.131.228"  # IP del receptor
+HOST = "10.1.5.132"  # IP del receptor
 PORT = 5001               # Puerto para escuchar
 
 # Crear el socket del servidor

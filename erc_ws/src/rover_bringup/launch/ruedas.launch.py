@@ -14,6 +14,7 @@ def generate_launch_description():
         # executable='motor_controller',
         executable='motor_vel_controller',
         name='motor_vel_controller_node',
+        arguments=['/dev/ruedas'],
     )
 
     # ================= LANZAR NODOS =================

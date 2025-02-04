@@ -87,7 +87,7 @@ topics_programas = {
     'package': 'unitree_lidar_ros2',
     'executable_or_file': 'unitree_lidar.launch.py',
     'arguments': {
-        'serial_port': '/dev/ttyUSB1'
+        'serial_port': '/dev/unitree_lidar'
     },
 },
 
@@ -111,9 +111,7 @@ topics_programas = {
     'command': 'run',
     'package': 'rover_motor_controller',
     'executable_or_file': 'motor_vel_controller',
-    'arguments': {
-        'device': '/dev/ttyUSB0',
-    },
+    'arguments': ['/dev/ruedas'],
 },
 
 '/gui/zed2_motors': {

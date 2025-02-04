@@ -20,44 +20,23 @@ topics_programas = {
 
 # ========= CAMARAS =======
 
-# '/gui/all_cameras': {      # TODO: Implementar
-#     'command': 'launch',
-#     'package': 'rover_bringup',
-#     'executable_or_file': 'all_cameras.launch.py',
-#     'arguments': {},
-# },
-
-# '/gui/logitech_cameras': {
-#     'command': 'launch',
-#     'package': 'rover_bringup',
-#     'executable_or_file': 'logitech_cameras.launch.py',
-#     'arguments': {
-#         'enable_camara1': 'true',
-#         'enable_camara2': 'true',
-#         'path_camara1': '/dev/video0',
-#         'path_camara2': '/dev/video2'
-#     },
-# },
-
-'/gui/logitech_cameras_1': {
+'/gui/logitech_camara_derecha': {
     'command': 'launch',
     'package': 'rover_bringup',
     'executable_or_file': 'logitech_cameras.launch.py',
     'arguments': {
-        'enable_camara1': 'true',
-        'enable_camara2': 'false',
-        'path_camara1': '/dev/video0'
+        'enable_camara_derecha': 'true',
+        'enable_camara_izquierda': 'false',
     },
 },
 
-'/gui/logitech_cameras_2': {
+'/gui/logitech_camara_izquierda': {
     'command': 'launch',
     'package': 'rover_bringup',
     'executable_or_file': 'logitech_cameras.launch.py',
     'arguments': {
-        'enable_camara1': 'false',
-        'enable_camara2': 'true',
-        'path_camara2': '/dev/video2'
+        'enable_camara_derecha': 'false',
+        'enable_camara_izquierda': 'true',
     },
 },
 

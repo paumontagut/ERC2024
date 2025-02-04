@@ -21,12 +21,9 @@ Por ahora la mayor parte de las pruebas se han hecho en la propia Jetson, puesto
 
 Para poder mandar comandos al rover, deberemos estar conectados a la misma red y también tener los sources bien configurados en ambos dispositivos. En la jetson se habrá hecho todo automáticamente, solo quedaría en el portátil del usuario.
 
-La conexión automática en la jetson se establecerá mediante `utilidades/net_connect.sh`.
+La conexión automática en la jetson se establecerá mediante [`internet_connection.sh`](startup_scripts/root_scripts/internet_connection.sh), y no debería dar problemas.
 
-Los sources y el ROS_DOMAIN_ID se establecerán mediante `utilidades/rover_sources.sh`, que también se deberá ejecutar en cada terminal que abra el usuario en su portátil.
-
-- [ ] TODO: Hacer bien esto anterior, implementar antena, wifis posibles por prioridad...
-- [ ] Mejorar rover_sources.sh, con comandos personalizados y rápidos, tuberias, mejores explicaciones, que aparezca al abrir terminal...
+Importante crear un alias que sourcea el siguiente script en nuestro portátil [`rover_source.sh`](utilidades/rover_source.sh), de esta manera siempre nos aseguraremos tener el los sources que tocan y el ROS_DOMAIN_ID. 
 
 ---
 
@@ -55,7 +52,6 @@ Una vez ya estemos conectados a la misma red que el rover y este esté encendido
 - [ ] TODO: Link a releases github, con fichero ubuntu, windows, android... y tener aqui para cceso facil
 - Esta se encarga de automáticamente mandar todos los topics necesarios, visualizar las cámaras [...]
 
-
 ### Topics pre-definidos
 
 - Acceder a topics predefinidos desde cualquier terminal
@@ -63,21 +59,7 @@ Una vez ya estemos conectados a la misma red que el rover y este esté encendido
         - `ros2 topic pub -1 {topic} std_msgs/Bool "data: true"`
         - `ros2 topic pub -1 {topic} std_msgs/Bool "data: false"`
     - Donde los topics posibles son los siguientes:
-        - `/gui/bringup`
-            - ¿qué hace? mira [Rover Bringup](#rover-bringup)
-        - `/gui/shutdown`
-            - Apaga el rover.
-        - `/gui/ruedas`
-        - `/gui/all_cameras`
-        - ...
-        - `/gui/logitech_cameras`
-        - `/gui/logitech_cameras_1`
-        - `/gui/logitech_cameras_2`
-        - `/gui/realsense_camera`
-        - `/gui/unitree_lidar`
-        - `/gui/zed2_motors`
-        - [...] TODO: Revisar
-    - Todos están en `/home/ujiroboticsteam/ERC2024/erc_ws/src/rover_supervisor/rover_supervisor/config/topics_programas.py`... explicar mejor
+        - Ver [`erc_ws/src/rover_supervisor/rover_supervisor/config/topics_programas.py`](erc_ws/src/rover_supervisor/rover_supervisor/config/topics_programas.py)
 
 ### Comandos personalizados
 

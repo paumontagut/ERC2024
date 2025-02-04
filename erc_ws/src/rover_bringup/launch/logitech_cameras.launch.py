@@ -14,32 +14,34 @@ def generate_launch_description():
     # Ver readme.md para más información
     # Se crean 2 cosas: el launchconfiguration (que es el valor que se pasa como tal, se puede usar como argumento para los nodos)...
     # y el declarelaunchargument (que es el hecho de poder recibir un argumento en sí, también necesario)
-    
-    # Camera 1 path
-    path_camara1_arg = DeclareLaunchArgument(
-        'path_camara1',
-        description="Device file for the first camera",
-        default_value='/dev/video0'
+    # Camera1 -> derecha
+    # Camera2 -> izquierda
+
+    # Camera Derecha path
+    path_camara_derecha_arg = DeclareLaunchArgument(
+        'path_camara_derecha',
+        description="Device file for the right camera",
+        default_value='/dev/logitech_derecha'
     )
 
-    # Camera 2 path
-    path_camara2_arg = DeclareLaunchArgument(
-        'path_camara2',
-        description="Device file for the second camera",
-        default_value='/dev/video2'
+    # Camera Izquierda path
+    path_camara_izquierda_arg = DeclareLaunchArgument(
+        'path_camara_izquierda',
+        description="Device file for the left camera",
+        default_value='/dev/logitech_izquierda'
     )
 
-    # Enable Camera 1
-    enable_camara1_arg = DeclareLaunchArgument(
-        'enable_camara1',
-        description="Enable the first camera (true/false)",
+    # Enable Camera Derecha
+    enable_camara_derecha_arg = DeclareLaunchArgument(
+        'enable_camara_derecha',
+        description="Enable the right camera (true/false)",
         default_value='true'
     )
 
     # Enable Camera 2
-    enable_camara2_arg = DeclareLaunchArgument(
-        'enable_camara2',
-        description="Enable the second camera (true/false)",
+    enable_camara_izquierda_arg = DeclareLaunchArgument(
+        'enable_camara_izquierda',
+        description="Enable the left camera (true/false)",
         default_value='true'
     )
     
@@ -57,45 +59,43 @@ def generate_launch_description():
 
 
     # ================= NODOS A EJECUTAR =================
-    # Camera 1 Node
-    camara1_nodo = Node(
+    camara_derecha_nodo = Node(
         package='v4l2_camera',
         executable='v4l2_camera_node',
-        name='camara_logitech_1',    # Node name
+        name='camara_logitech_derecha',
         parameters=[
-            {'video_device': LaunchConfiguration('path_camara1')},
+            {'video_device': LaunchConfiguration('path_camara_derecha')},
             {'image_size': LaunchConfiguration('image_size')},
             {'time_per_frame': LaunchConfiguration('time_per_frame')},
             {'pixel_format': 'YUYV'},
         ],
         
 
-        remappings=[('/image_raw/compressed', '/camara_logitech_1/image_raw/compressed')],
-        condition=IfCondition(LaunchConfiguration('enable_camara1'))  # Launch condition based on enable_camara1
+        remappings=[('/image_raw/compressed', '/camara_logitech_derecha/image_raw/compressed')],
+        condition=IfCondition(LaunchConfiguration('enable_camara_derecha'))  # Launch condition based on enable_camara_derecha
     )
 
-    # Camera 2 Node
-    camara2_nodo = Node(
+    camara_izquierda_nodo = Node(
         package='v4l2_camera',
         executable='v4l2_camera_node',
-        name='camara_logitech_2',
-        parameters=[{'video_device': LaunchConfiguration('path_camara2')},
+        name='camara_logitech_izquierda',
+        parameters=[{'video_device': LaunchConfiguration('path_camara_izquierda')},
                     {'image_size': LaunchConfiguration('image_size')},
                     {'time_per_frame': LaunchConfiguration('time_per_frame')},
                     {'pixel_format': 'YUYV'}],
-        remappings=[('/image_raw/compressed', '/camara_logitech_2/image_raw/compressed')],
-        condition=IfCondition(LaunchConfiguration('enable_camara2'))
+        remappings=[('/image_raw/compressed', '/camara_logitech_izquierda/image_raw/compressed')],
+        condition=IfCondition(LaunchConfiguration('enable_camara_izquierda'))
     )
 
     # ================= LANZAR NODOS =================
     # Return the arguments for external use and launch selected nodes
     return LaunchDescription([
-        path_camara1_arg,
-        path_camara2_arg,
-        enable_camara1_arg,
-        enable_camara2_arg,
+        path_camara_derecha_arg,
+        path_camara_izquierda_arg,
+        enable_camara_derecha_arg,
+        enable_camara_izquierda_arg,
         resolution_arg,
         frame_rate_arg,
-        camara1_nodo,
-        camara2_nodo
+        camara_derecha_nodo,
+        camara_izquierda_nodo
     ])

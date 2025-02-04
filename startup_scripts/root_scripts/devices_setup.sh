@@ -19,13 +19,17 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{seria
 # 2. Ruedas (Motor)
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT94VXEO", SYMLINK+="ruedas", MODE="0666"
 
-# 5. Webcam Logitech C270 Izquierda
-SUBSYSTEM=="video4linux", ENV{ID_PATH}=="platform-3610000.usb-usb-0:2.3.3:1.0", \
-    SYMLINK+="logitech_izquierda", MODE="0666"
-
-# 6. Webcam Logitech C270 Derecha
-SUBSYSTEM=="video4linux", ENV{ID_PATH}=="platform-3610000.usb-usb-0:2.3.4:1.0", \
+# Webcam Logitech C270 Derecha (capture node)
+SUBSYSTEM=="video4linux", \
+    ENV{ID_V4L_CAPABILITIES}==":capture:", \
+    ENV{ID_PATH}=="platform-3610000.usb-usb-0:2.3.3:1.0", \
     SYMLINK+="logitech_derecha", MODE="0666"
+
+# Webcam Logitech C270 Izquierda (capture node)
+SUBSYSTEM=="video4linux", \
+    ENV{ID_V4L_CAPABILITIES}==":capture:", \
+    ENV{ID_PATH}=="platform-3610000.usb-usb-0:2.3.4:1.0", \
+    SYMLINK+="logitech_izquierda", MODE="0666"
 EOF
 
 # Aplicar cambios en udev

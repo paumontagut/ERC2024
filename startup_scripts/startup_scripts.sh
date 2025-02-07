@@ -47,6 +47,6 @@ run_scripts() {
 run_scripts "$ROOT_SCRIPTS_DIR" "yes"
 
 # Run user scripts
-run_scripts "$USER_SCRIPTS_DIR" "no"
+run_scripts "$USER_SCRIPTS_DIR" "yes"
 
 echo "✅ Finished executing startup scripts at $(date)" >> "$LOGFILE"

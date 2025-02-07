@@ -16,7 +16,7 @@ while true; do
     fi
 
     # Publicar la IP en el topic de ROS 2
-    ros2 topic pub /ip_variable std_msgs/msg/String "{data: '$IP_ADDRESS'}" --once > /dev/null 2>&1
+    ros2 topic pub /ip_address std_msgs/msg/String "{data: '$IP_ADDRESS'}" --once > /dev/null 2>&1
 
     # Mostrar en la terminal la IP enviada
     echo "📡 Dirección IP enviada: $IP_ADDRESS"

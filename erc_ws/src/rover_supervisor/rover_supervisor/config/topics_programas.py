@@ -11,6 +11,13 @@ topics_programas = {
     'arguments': {},
 },
 
+'/gui/file_receptor': {
+    'command': 'exec',
+    'package': None,
+    'executable_or_file': 'python3 file_receptor.py',
+    'arguments': {},
+},
+
 '/gui/shutdown': {
     'command': 'exec',
     'package': None,

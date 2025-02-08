@@ -4,12 +4,13 @@ topics_programas = {
 # ======== BRINGUP GLOBAL ========
 # ================================
 # Activa todos los sensores y actuadores
-'/gui/rover_bringup': {     # TODO: Revisar bien.
-    'command': 'launch',
-    'package': 'rover_bringup',
-    'executable_or_file': 'rover_bringup.launch.py',
-    'arguments': {},
-},
+
+# '/gui/rover_bringup': {
+#     'command': 'launch',
+#     'package': 'rover_bringup',
+#     'executable_or_file': 'rover_bringup.launch.py',
+#     'arguments': {},
+# },
 
 '/gui/file_receptor': {
     'command': 'exec',
@@ -49,22 +50,14 @@ topics_programas = {
 
 '/gui/realsense_camera': {
     'command': 'launch',
-    'package': 'realsense2_camera',
-    'executable_or_file': 'rs_launch.py',
+    'package': 'rover_bringup',
+    'executable_or_file': 'realsense_launch.py',
     'arguments': {
         'align_depth.enable': 'false',
         'pointcloud.enable': 'false',
         'camera_depth': 'true'
     },
 },
-
-# '/gui/siyi_camera': {
-#     # Pendiente de implementar
-# },
-
-# '/gui/zed2_camera': {   # TODO: implementar
-# },
-
 
 # ========= LIDARS =========
 
@@ -88,13 +81,6 @@ topics_programas = {
 
 # ========= MOTORS =========
 
-# '/gui/all_motors': {
-#     'command': 'launch',
-#     'package': 'rover_bringup',
-#     'executable_or_file': 'all_motors.launch.py',
-#     'arguments': {},
-# },
-
 '/gui/ruedas': {
     'command': 'run',
     'package': 'rover_motor_controller',
@@ -108,10 +94,4 @@ topics_programas = {
     'executable_or_file': 'zed2_motors.launch.py',
     'arguments': {},
 },
-
-# ========= OTROS =========
-# '/gui/semaforo': {
-#     # Pendiente de implementar
-# },
-
 }

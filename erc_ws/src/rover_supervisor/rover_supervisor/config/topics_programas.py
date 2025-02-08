@@ -77,12 +77,14 @@ topics_programas = {
     },
 },
 
-# '/gui/lidar_2d': {
-#     'command': 'launch',
-#     'package': 'rover_bringup',
-#     'executable_or_file': 'lidar_2d.launch.py',
-#     'arguments': {},
-# },
+'/gui/lidar_2d': {
+    'command': 'launch',
+    'package': 'rover_bringup',
+    'executable_or_file': 'lidar2d.launch.py',
+    'arguments': {
+        'serial_port': '/dev/lidar2d'
+    },
+},
 
 # ========= MOTORS =========
 
@@ -97,7 +99,7 @@ topics_programas = {
     'command': 'run',
     'package': 'rover_motor_controller',
     'executable_or_file': 'motor_vel_controller',
-    'arguments': ['/dev/ruedas'],
+    'arguments': {'/dev/ruedas'},
 },
 
 '/gui/zed2_motors': {

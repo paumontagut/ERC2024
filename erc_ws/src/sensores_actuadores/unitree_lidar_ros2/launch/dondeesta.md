@@ -1,1 +1,0 @@
-este launch se ha puesto en "rover_bringup/launch" así se simplifica todo, y podemos cambiarlo como queramos

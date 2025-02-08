@@ -13,8 +13,11 @@ UDEV_RULES_FILE="/etc/udev/rules.d/99-usb.rules"
 echo "🔄 Creando reglas UDEV en $UDEV_RULES_FILE ..."
 
 cat <<EOF > $UDEV_RULES_FILE
-# 1. LIDARs
-SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="02C90019", SYMLINK+="unitree_lidar", MODE="0666"
+# LIDAR 4D
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ENV{ID_MODEL}=="CP2102N_USB_to_UART_Bridge_Controller", SYMLINK+="lidar2d", MODE="0666"
+
+# LIDAR 2D
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ENV{ID_MODEL}=="CP2104_USB_to_UART_Bridge_Controller", SYMLINK+="unitree_lidar", MODE="0666"
 
 # 2. Ruedas (Motor)
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", ATTRS{serial}=="FT94VXEO", SYMLINK+="ruedas", MODE="0666"
@@ -39,7 +42,7 @@ udevadm trigger
 
 # Mostrar reglas creadas
 echo "✅ Reglas UDEV aplicadas. Verificando..."
-ls -l /dev/unitree_lidar /dev/ruedas /dev/realsense_depth /dev/realsense_color /dev/logitech_izquierda /dev/logitech_derecha 2>/dev/null
+ls -l /dev/lidar2d /dev/unitree_lidar /dev/ruedas /dev/realsense_depth /dev/realsense_color /dev/logitech_izquierda /dev/logitech_derecha 2>/dev/null
 
 echo "🟢 Configuración completada."
 

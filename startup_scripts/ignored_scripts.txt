@@ -1,5 +1,5 @@
-#ip_address.sh
+ip_address.sh
 #start_supervisor.sh
-#jetson_sshx_bot_v4.sh
+jetson_sshx_bot_v4.sh
 #devices_setup.sh
 internet_connection.sh

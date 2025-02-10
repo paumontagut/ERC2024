@@ -5,6 +5,11 @@
 # Se definen los servicios en un array para facilitar futuras modificaciones.
 # =====================================================
 
+if [[ $EUID -ne 0 ]]; then
+    echo "❌ Este script debe ejecutarse con sudo o como root."
+    exit 1
+fi
+
 # Directorio donde se encuentran los archivos de servicio en el repositorio
 SYSTEMD_DIR="/home/ujiroboticsteam/ERC2024/systemd"
 TARGET_DIR="/etc/systemd/system"

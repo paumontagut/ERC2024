@@ -1,0 +1,10 @@
+[Unit]
+Description=Publica la IP local en un topic de ROS2
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/ujiroboticsteam/ERC2024/startup_scripts/ip_address.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -28,7 +28,7 @@ topics_programas = {
 
 # ========= CAMARAS =======
 
-'/gui/logitech_camara_derecha': {
+'/gui/logitech_camera_right': {
     'command': 'launch',
     'package': 'rover_bringup',
     'executable_or_file': 'logitech_cameras.launch.py',
@@ -38,7 +38,7 @@ topics_programas = {
     },
 },
 
-'/gui/logitech_camara_izquierda': {
+'/gui/logitech_camera_left': {
     'command': 'launch',
     'package': 'rover_bringup',
     'executable_or_file': 'logitech_cameras.launch.py',
@@ -61,7 +61,7 @@ topics_programas = {
 
 # ========= LIDARS =========
 
-'/gui/unitree_lidar': {
+'/gui/lidar_4d': {
     'command': 'launch',
     'package': 'unitree_lidar_ros2',
     'executable_or_file': 'unitree_lidar.launch.py',
@@ -81,7 +81,7 @@ topics_programas = {
 
 # ========= MOTORS =========
 
-'/gui/ruedas': {
+'/gui/wheels': {
     'command': 'run',
     'package': 'rover_motor_controller',
     'executable_or_file': 'motor_vel_controller',

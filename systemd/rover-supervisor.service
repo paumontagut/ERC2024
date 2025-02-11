@@ -1,0 +1,14 @@
+[Unit]
+Description=Lanza el nodo supervisor del rover
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ujiroboticsteam/ERC2024
+ExecStart=/home/ujiroboticsteam/ERC2024/startup_scripts/start_supervisor.sh
+Restart=always
+RestartSec=5
+User=ujiroboticsteam
+
+[Install]
+WantedBy=multi-user.target

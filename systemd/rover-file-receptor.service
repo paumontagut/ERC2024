@@ -1,0 +1,12 @@
+[Unit]
+Description=Servicio de receptor de archivos para el rover
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env python3 /home/ujiroboticsteam/ERC2024/startup_scripts/file_receptor.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

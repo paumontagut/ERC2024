@@ -1,0 +1,10 @@
+[Unit]
+Description=Configura las reglas UDEV para el rover
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/ujiroboticsteam/ERC2024/startup_scripts/devices_setup.sh
+
+[Install]
+WantedBy=multi-user.target

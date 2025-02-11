@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer para ejecutar el servicio de publicación de IP
+
+[Timer]
+OnBootSec=10s
+OnUnitActiveSec=60s
+Unit=rover-ip.service
+
+[Install]
+WantedBy=timers.target

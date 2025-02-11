@@ -1,0 +1,13 @@
+[Unit]
+Description=Lanza el servicio SSHX para acceso remoto a la Jetson
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/ujiroboticsteam/ERC2024/startup_scripts/jetson_sshx_bot.sh
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

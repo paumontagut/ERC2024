@@ -13,7 +13,8 @@ Este documento contiene un resumen de todos los pasos a seguir para poder hacer 
         - [GUI Principal](#gui-principal)
         - [Topics pre-definidos](#topics-pre-definidos)
         - [Comandos personalizados](#comandos-personalizados)
-    - [Siguientes aspectos](#siguientes-aspectos)
+    - [Aspectos programación](#aspectos-programación)
+        - [Programas de inicio automáticos](#programas-de-inicio-automáticos)
 
 ## Requisitos
 
@@ -79,7 +80,7 @@ Son aquellos scripts que se encuentran en `ERC2024/startup_scripts/scripts`, que
 
 Entre los programas que se ejecutan están:
 
-- jetson_sshx_bot_v4.sh
+- jetson_sshx_bot.sh
     - Explicado anteriormente
 
 - start_supervisor.sh

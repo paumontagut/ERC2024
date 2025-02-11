@@ -71,7 +71,7 @@ def generate_launch_description():
         ],
         
 
-        remappings=[('/image_raw/compressed', '/camara_logitech_derecha/image_raw/compressed')],
+        remappings=[('/image_raw/compressed', '/logitech_camera_right/image_raw/compressed')],
         condition=IfCondition(LaunchConfiguration('enable_camara_derecha'))  # Launch condition based on enable_camara_derecha
     )
 
@@ -83,7 +83,7 @@ def generate_launch_description():
                     {'image_size': LaunchConfiguration('image_size')},
                     {'time_per_frame': LaunchConfiguration('time_per_frame')},
                     {'pixel_format': 'YUYV'}],
-        remappings=[('/image_raw/compressed', '/camara_logitech_izquierda/image_raw/compressed')],
+        remappings=[('/image_raw/compressed', '/logitech_camera_left/image_raw/compressed')],
         condition=IfCondition(LaunchConfiguration('enable_camara_izquierda'))
     )
 

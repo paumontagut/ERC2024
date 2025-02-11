@@ -40,6 +40,6 @@ udevadm control --reload-rules
 udevadm trigger
 
 echo "✅ Reglas UDEV aplicadas. Verificando..."
-ls -l /dev/lidar2d /dev/unitree_lidar /dev/ruedas /dev/realsense_depth /dev/realsense_color /dev/logitech_izquierda /dev/logitech_derecha 2>/dev/null
+ls -l /dev/lidar2d /dev/unitree_lidar /dev/ruedas /dev/realsense_depth /dev/realsense_color /dev/logitech_izquierda /dev/logitech_derecha 2>/dev/null || true
 
 echo "🟢 Configuración completada."

@@ -20,7 +20,7 @@ SERVICES=(
   "rover-file-receptor.service"
   "rover-internet.service"
   "rover-ip.service"          # El servicio que se usará con timer
-  "rover-sshx.service"
+  # "rover-sshx.service"
   "rover-supervisor.service"
 )
 

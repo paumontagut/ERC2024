@@ -26,7 +26,7 @@ SERVICES=(
 
 # Si usas el timer para ip, también lo puedes agregar a una variable aparte:
 TIMERS=(
-  "rover-ip.timer"
+  #"rover-ip.timer"
 )
 
 # Función para instalar (copiar) los archivos de servicio y timer

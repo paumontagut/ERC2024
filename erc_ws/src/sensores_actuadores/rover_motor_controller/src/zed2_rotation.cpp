@@ -54,7 +54,7 @@ public:
         // ╚═════════════════════════════╝
 
         horizontal_position_subscriber_ = this->create_subscription<std_msgs::msg::Int32>(
-            "zed2_rotation_horizontal",
+            "/gui/zed2_rotation/horizontal",
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) {
                 // ╔═════════════════════════════════════════════════════════════════════════╗
@@ -83,7 +83,7 @@ public:
         );
 
         vertical_position_subscriber_ = this->create_subscription<std_msgs::msg::Int32>(
-            "zed2_rotation_vertical",
+            "/gui/zed2_rotation/vertical",
             QOS_RKL10V,
             [this](const std_msgs::msg::Int32::SharedPtr msg) {
                 // ╔════════════════════════════════════════════════════════════════════════════╗

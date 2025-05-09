@@ -47,6 +47,19 @@ topics_programas = {
     },
 },
 
+'/gui/zed2_camera': {
+    'command': 'launch',
+    'package': 'zed_wrapper',
+    'executable_or_file': 'zed_camera.launch.py',
+    'arguments': {
+        'align_depth.enable': 'false',
+        'pointcloud.enable': 'false',
+        'camera_depth': 'true',
+        'camera_model': 'zed2i'
+    },
+},
+
+
 # ========= LIDARS =========
 
 '/gui/lidar_4d': {

@@ -1,16 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-//                     *** DYNAMIXEL MOTOR ROS2 NODE ***
+//                          Programa para activar motores
+// 
+// Se usa de la siguiente manera:
+// 
+// motor_controller USB ID Modo
+//  
+// 
 //
-//
-//                         * Enable USB port access *
-// >> sudo usermod -aG dialout <linux_account>
-//
-//                               * Start node *
-// >> ros2 run rover_bringup motor_controller
-//
-//             * Send SetVelocity messages to /set_velocity topic *
-//                             1 unit = 0.229 rpm
-// >> ros2 topic pub -1 /set_velocity custom_interfaces/SetVelocity "{id: 1, velocity: 500}"
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -20,123 +16,79 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "custom_interfaces/msg/set_velocity.hpp"
 #include "custom_interfaces/srv/get_velocity.hpp"
+#include "custom_interfaces/srv/get_position.hpp"
+#include "geometry_msgs/msg/twist.hpp"
 #include "rcutils/cmdline_parser.h" // Dynamixel SDK
+#include "std_msgs/msg/float32.hpp"
 
-#include "motor_controller.hpp"
 
-// Control table for Dynamixel XM540-W270-T/R
+#include "motor_vel_controller.hpp"
+
+// Control table for Dynamixel X Series
 #define ADDR_OPERATING_MODE 11 // 1 for velocity control | 3 for position control
 #define ADDR_TORQUE_ENABLE 64 // 0 for torque off | 1 for torque on
 #define ADDR_GOAL_VELOCITY 104
 #define ADDR_PRESENT_VELOCITY 128
+#define ADDR_GOAL_POSITION 116
+#define ADDR_PRESENT_POSITION 132
 
 // Protocol version
 #define PROTOCOL_VERSION 2.0
 
-// Default setting
-#define BAUDRATE 1000000 // 57600 Default baudrate
-#define DEVICE_NAME "/dev/ttyUSB0" // ls /dev/ttyUSB* to find the correct device name
+// Default settings
+#define BAUDRATE 1000000 // TODO: Es esto verdad?
+#define DEFAULT_DEVICE_NAME "/dev/ttyUSB0" // ls /dev/ttyUSB* to find the correct device name
+
+// Robot parameters
+#define VELOCITY_UNIT 0.229 // TODO: Poner bien -> rpm | See https://emanual.robotis.com/docs/en/dxl/x/xl330-m077/#velocity-limit for more details
+#define WHEEL_DIAMETER 0.23 // TODO: Preguntar bien (metros)
+#define WHEEL_SEPARATION 0.344 // TODO: Poner bien (metros)
+
+// TODO: Motor IDs
+#define RIGHT_FRONT_ID 1
+#define RIGHT_REAR_ID 2
+#define LEFT_FRONT_ID 3
+#define LEFT_REAR_ID 4
 
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
 
-uint8_t dxl_error = 0;
-uint32_t goal_velocity = 0;
+// Constants
+constexpr double pi = 3.141592653589793;
+
+// Variables for motor control
+uint8_t id_herramienta = 3;
+uint32_t goal_position = 0;
+int32_t right_wheels_velocity = 0;
+int32_t left_wheels_velocity = 0;
+uint8_t mode = 1; // Velocity mode
+
+// Unit that allows the program to convert desired robot velocity to motor velocity units
+const double distance_unit = 1 / (pi * VELOCITY_UNIT * WHEEL_DIAMETER / 60);
+
+// Error handling
 int dxl_comm_result = COMM_TX_FAIL;
+uint8_t dxl_error = 0;
 
+void setupDynamixel(uint8_t dxl_id, unit8_t mode) {
 
-MotorController::MotorController()
-: Node("motor_controller") {
-
-   RCLCPP_INFO(this->get_logger(), "Motor Controller node started");
-   
-   this->declare_parameter("qos_depth", 10);
-   int8_t qos_depth = 0;
-   this->get_parameter("qos_depth", qos_depth);
-
-   const auto QOS_RKL10V = // Defines QoS
-    rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
-
-   // Subscribes to set_velocity topic and defines its callback
-   set_velocity_subscriber_ =
-      this->create_subscription<SetVelocity>(
-      "set_velocity",
-      QOS_RKL10V,
-      [this](const SetVelocity::SharedPtr msg) -> void {
-         uint8_t dxl_error = 0;
-
-         // Velocity value
-         uint32_t goal_velocity = (unsigned int)msg->velocity;
-
-         // Send goal velocity (4 bytes) to the DYNAMIXEL
-         dxl_comm_result =
-         packetHandler->write4ByteTxRx(
-            portHandler, 
-            (uint8_t) msg->id, 
-            ADDR_GOAL_VELOCITY, 
-            goal_velocity, 
-            &dxl_error
-         );
-
-	if (dxl_comm_result != COMM_SUCCESS) {
-	    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-	} else if (dxl_error != 0) {
-	    RCLCPP_ERROR(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-	} else {
-	    RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Velocity: %d]", msg->id, msg->velocity);
-	}
-      }
-   );
-
-   // Defines a service to get the motor's current velocity
-   auto get_current_velocity =
-      [this](
-      const std::shared_ptr<GetVelocity::Request> request,
-      std::shared_ptr<GetVelocity::Response> response) -> void {
-         
-         // Read current velocity (4 bytes)
-         dxl_comm_result = packetHandler->read4ByteTxRx(
-            portHandler, 
-            (uint8_t) request->id, 
-            ADDR_PRESENT_VELOCITY, 
-            reinterpret_cast<uint32_t*>(&current_velocity),
-            &dxl_error
-         );
-
-         RCLCPP_INFO(
-            this->get_logger(),
-            "Get [ID: %d] [Current Velocity: %d]",
-            request->id,
-            current_velocity
-         );
-
-         response->velocity = current_velocity;
-      };
-   get_velocity_server_ = create_service<GetVelocity>("get_velocity", get_current_velocity);
-}
-
-MotorController::~MotorController() { RCLCPP_INFO(this->get_logger(), "Motor Controller node stopped"); }
-
-void setupDynamixel(uint8_t dxl_id) {
-
-   // Use Velocity Control mode
-   dxl_comm_result = packetHandler->write1ByteTxRx(
-      portHandler, 
-      dxl_id, 
-      ADDR_OPERATING_MODE, 
-      1, 
-      &dxl_error
-   );
-
+        // ----- SET VELOCITY MODE TO ALL MOTORS
+    dxl_comm_result = packetHandler->write1ByteTxRx(
+        portHandler, 
+        dxl_id, 
+        ADDR_OPERATING_MODE, 
+        mode, 
+        &dxl_error
+    );
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set Velocity Control mode.");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to set Velocity Control mode for ID %d.", dxl_id);
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set Velocity Control mode.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to set Velocity Control mode for ID %d.", dxl_id);
    }
 
-   // Enable Torque so the motor can move (EEPROM will be locked)
+   // -------- Enable Torque so the motor can move (EEPROM will be locked)
+   // IMPORTANT: Torque must be disabled to change the operating mode
    dxl_comm_result = packetHandler->write1ByteTxRx(
       portHandler, 
       dxl_id, 
@@ -146,50 +98,87 @@ void setupDynamixel(uint8_t dxl_id) {
    );
 
    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to enable Torque.");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to enable Torque for ID %d.", dxl_id);
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to enable Torque.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to enable Torque for ID %d.", dxl_id);
    }
 }
 
-int main(int argc, char * argv[]) {
-   portHandler = dynamixel::PortHandler::getPortHandler(DEVICE_NAME);
+dynamixel::PortHandler init(const char* deviceName, const char* id, uint8_t mode){
+      const char* deviceName = DEFAULT_DEVICE_NAME;
+      if (id == "Wheels"){
+              uint8_t ids[4] = {LEFT_FRONT_ID, LEFT_REAR_ID, RIGHT_FRONT_ID, RIGHT_REAR_ID};
+        } else {
+            uint8_t ids[1] = std::stoi(id);
+        }
+   std::cout << "Using device: " << deviceName << std::endl;
+
+   portHandler = dynamixel::PortHandler::getPortHandler(deviceName);
    packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
    
    // Open Serial Port
    dxl_comm_result = portHandler->openPort();
    if (dxl_comm_result == false) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to open the port!");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to open the port!");
       return -1;
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to open the port.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to open the port.");
    }
    
    // Set the baudrate of the serial port (use DYNAMIXEL Baudrate)
    dxl_comm_result = portHandler->setBaudRate(BAUDRATE);
    if (dxl_comm_result == false) {
-      RCLCPP_ERROR(rclcpp::get_logger("motor_controller"), "Failed to set the baudrate!");
+      RCLCPP_ERROR(rclcpp::get_logger("motor_vel_controller"), "Failed to set the baudrate!");
       return -1;
    } else {
-      RCLCPP_INFO(rclcpp::get_logger("motor_controller"), "Succeeded to set the baudrate.");
+      RCLCPP_INFO(rclcpp::get_logger("motor_vel_controller"), "Succeeded to set the baudrate.");
    }
    
-   setupDynamixel(BROADCAST_ID);
+   // Initialize Motors with the correct operating mode for each one,
+   // and enable Torque for all of them
+   for(auto id : ids){
+       setupDynamixel(id, mode);
+   }
    
+   // Keep the node running until closed
    rclcpp::init(argc, argv);
-   
    auto motorcontroller = std::make_shared<MotorController>();
    rclcpp::spin(motorcontroller);
+   
+   // On shutdown, disable Torque of DYNAMIXEL
    rclcpp::shutdown();
+
+   // Disable Torque of all wheels
+    for(auto id : wheel_ids){
+        packetHandler->write1ByteTxRx(
+            portHandler,
+            id,
+            ADDR_TORQUE_ENABLE,
+            0,
+            &dxl_error
+        );
+    }
+    return portHandler;
+}
+
+int main(int argc, char * argv[]) {
    
-   // Disable Torque of DYNAMIXEL
-   packetHandler->write1ByteTxRx(
-      portHandler,
-      BROADCAST_ID,
-      ADDR_TORQUE_ENABLE,
-      0,
-      &dxl_error
-   );
-   
+   // Get custom device name
+   if (argc > 1) {
+      deviceName = argv[1]; 
+      if (argc > 2){
+         ids = argv[2];
+        if (argc > 3){
+            if (argv[3] == "Velocity"){
+                mode = 1;
+            } else if (argv[3] == "Position"){
+                mode = 3;
+            }
+        }
+    }
+   }
+   init(deviceName, ids, mode);
+}
+
    return 0;
 }
